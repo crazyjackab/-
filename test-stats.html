@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>统计测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .stat-display {
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>链接收藏统计测试</h1>
+        
+        <div class="stat-display">
+            <div>链接数量：<span class="stat-number" id="totalLinksCount">0</span></div>
+        </div>
+        
+        <div class="stat-display">
+            <div>文件夹数量：<span class="stat-number" id="totalFoldersCount">0</span></div>
+        </div>
+        
+        <div class="stat-display">
+            <div>标签数量：<span class="stat-number" id="totalTagsCount">0</span></div>
+        </div>
+        
+        <div>
+            <button onclick="testDirectUpdate()">直接更新统计</button>
+            <button onclick="testWithTimeout()">延迟更新统计</button>
+            <button onclick="clearStats()">清空统计</button>
+            <button onclick="addTestData()">添加测试数据</button>
+            <button onclick="loadMainScript()">加载主脚本</button>
+        </div>
+        
+        <div class="log" id="log"></div>
+    </div>
+
+    <script>
+        // 简单的日志功能
+        function log(message) {
+            const logElement = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${time}] ${message}<br>`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+        
+        // 直接更新统计
+        function testDirectUpdate() {
+            log('开始直接更新统计...');
+            
+            const linksElement = document.getElementById('totalLinksCount');
+            const foldersElement = document.getElementById('totalFoldersCount');
+            const tagsElement = document.getElementById('totalTagsCount');
+            
+            log(`元素查找结果: 链接=${!!linksElement}, 文件夹=${!!foldersElement}, 标签=${!!tagsElement}`);
+            
+            if (linksElement) {
+                linksElement.textContent = '5';
+                linksElement.style.color = 'green';
+                log('链接数量已更新为5');
+            }
+            
+            if (foldersElement) {
+                foldersElement.textContent = '3';
+                foldersElement.style.color = 'green';
+                log('文件夹数量已更新为3');
+            }
+            
+            if (tagsElement) {
+                tagsElement.textContent = '8';
+                tagsElement.style.color = 'green';
+                log('标签数量已更新为8');
+            }
+        }
+        
+        // 延迟更新统计
+        function testWithTimeout() {
+            log('开始延迟更新统计...');
+            
+            setTimeout(() => {
+                log('延迟100ms后执行更新');
+                testDirectUpdate();
+            }, 100);
+        }
+        
+        // 清空统计
+        function clearStats() {
+            log('清空统计数据');
+            
+            document.getElementById('totalLinksCount').textContent = '0';
+            document.getElementById('totalFoldersCount').textContent = '0';
+            document.getElementById('totalTagsCount').textContent = '0';
+            
+            // 恢复颜色
+            document.getElementById('totalLinksCount').style.color = '';
+            document.getElementById('totalFoldersCount').style.color = '';
+            document.getElementById('totalTagsCount').style.color = '';
+        }
+        
+        // 添加测试数据
+        function addTestData() {
+            log('添加测试数据到localStorage');
+            
+            const testData = {
+                links: [
+                    { id: '1', title: 'GitHub', url: 'https://github.com', tags: ['开发', '代码'] },
+                    { id: '2', title: 'MDN', url: 'https://developer.mozilla.org', tags: ['文档', '学习'] },
+                    { id: '3', title: '菜鸟教程', url: 'https://www.runoob.com', tags: ['教程', '学习'] }
+                ],
+                linkFolders: [
+                    { id: 'default', name: '默认文件夹' },
+                    { id: 'dev', name: '开发工具' }
+                ]
+            };
+            
+            localStorage.setItem('knowledgeBaseData', JSON.stringify(testData));
+            log(`已保存 ${testData.links.length} 个链接和 ${testData.linkFolders.length} 个文件夹到localStorage`);
+        }
+        
+        // 加载主脚本
+        function loadMainScript() {
+            log('尝试加载主脚本...');
+            
+            const script = document.createElement('script');
+            script.src = 'script.js';
+            script.onload = () => {
+                log('主脚本加载成功');
+                setTimeout(() => {
+                    if (window.knowledgeBase) {
+                        log('KnowledgeBase实例已创建');
+                        window.knowledgeBase.updateLinksPageStats();
+                        log('调用updateLinksPageStats完成');
+                    } else {
+                        log('KnowledgeBase实例未找到');
+                    }
+                }, 500);
+            };
+            script.onerror = () => {
+                log('主脚本加载失败');
+            };
+            document.head.appendChild(script);
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            log('页面加载完成，统计测试页面已准备就绪');
+        });
+    </script>
+</body>
+</html>

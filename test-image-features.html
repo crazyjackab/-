@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片收藏功能测试</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            background-color: var(--bg-primary);
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-radius: 12px;
+        }
+        
+        .test-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .test-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .status-info {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #0c4a6e;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1><i class="fas fa-image"></i> 图片收藏功能测试</h1>
+            <p>测试标签分类、原图压缩、笔记关联等新功能</p>
+        </div>
+        
+        <div class="test-section">
+            <h2><i class="fas fa-cog"></i> 测试控制</h2>
+            <div class="status-info" id="testStatus">
+                准备就绪，点击下方按钮开始测试
+            </div>
+            
+            <div class="test-actions">
+                <button id="addTestImages" class="btn-primary">
+                    <i class="fas fa-plus"></i> 添加测试图片
+                </button>
+                <button id="addTestNotes" class="btn-secondary">
+                    <i class="fas fa-sticky-note"></i> 添加测试笔记
+                </button>
+                <button id="testImageDetails" class="btn-secondary" disabled>
+                    <i class="fas fa-info-circle"></i> 测试图片详情
+                </button>
+                <button id="testNoteAssociation" class="btn-secondary" disabled>
+                    <i class="fas fa-link"></i> 测试笔记关联
+                </button>
+                <button id="clearTestData" class="btn-danger">
+                    <i class="fas fa-trash"></i> 清空测试数据
+                </button>
+            </div>
+        </div>
+        
+        <!-- 图片筛选器 -->
+        <div class="image-filters">
+            <div class="filter-group">
+                <label for="imageCategoryFilter">
+                    <i class="fas fa-folder"></i>
+                    分类：
+                </label>
+                <select id="imageCategoryFilter" class="filter-select">
+                    <option value="all">所有分类</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="imageTagFilter">
+                    <i class="fas fa-tags"></i>
+                    标签：
+                </label>
+                <select id="imageTagFilter" class="filter-select">
+                    <option value="all">所有标签</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="imageSortFilter">
+                    <i class="fas fa-sort"></i>
+                    排序：
+                </label>
+                <select id="imageSortFilter" class="filter-select">
+                    <option value="newest">最新优先</option>
+                    <option value="oldest">最旧优先</option>
+                    <option value="name">按名称</option>
+                    <option value="size">按大小</option>
+                    <option value="category">按分类</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label style="opacity: 0; pointer-events: none;">占位</label>
+                <button id="clearImageFilters" class="btn-secondary filter-clear-btn">
+                    <i class="fas fa-times"></i> 清除筛选
+                </button>
+            </div>
+            
+            <div class="filter-group">
+                <label style="opacity: 0; pointer-events: none;">占位</label>
+                <button id="manageCategories" class="btn-primary">
+                    <i class="fas fa-cog"></i> 管理分类
+                </button>
+            </div>
+        </div>
+        
+        <!-- 图片显示区域 -->
+        <div class="image-gallery" id="imagesGrid">
+            <!-- 图片内容会动态生成 -->
+        </div>
+        
+        <!-- 测试结果 -->
+        <div class="test-section">
+            <h2><i class="fas fa-clipboard-check"></i> 测试结果</h2>
+            <div id="testResults" class="status-info">
+                等待测试...
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let testResults = [];
+        
+        function updateStatus(message) {
+            document.getElementById('testStatus').innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+        }
+        
+        function addTestResult(test, status, message) {
+            testResults.push({ test, status, message, time: new Date().toLocaleTimeString() });
+            updateTestResults();
+        }
+        
+        function updateTestResults() {
+            const resultsEl = document.getElementById('testResults');
+            if (testResults.length === 0) {
+                resultsEl.innerHTML = '等待测试...';
+                return;
+            }
+            
+            const resultsHtml = testResults.map(result => `
+                <div style="margin-bottom: 8px; padding: 8px; border-radius: 4px; background: ${result.status === 'success' ? '#d1fae5' : '#fee2e2'};">
+                    <strong>[${result.time}] ${result.test}:</strong> 
+                    <span style="color: ${result.status === 'success' ? '#059669' : '#dc2626'};">
+                        ${result.status === 'success' ? '✅' : '❌'} ${result.message}
+                    </span>
+                </div>
+            `).join('');
+            
+            resultsEl.innerHTML = resultsHtml;
+        }
+        
+        // 等待页面加载完成
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.knowledgeBase) {
+                setupTestEvents();
+                updateStatus('知识库系统已加载，可以开始测试');
+            } else {
+                setTimeout(() => {
+                    if (window.knowledgeBase) {
+                        setupTestEvents();
+                        updateStatus('知识库系统已加载，可以开始测试');
+                    } else {
+                        updateStatus('错误：知识库系统未加载');
+                    }
+                }, 1000);
+            }
+        });
+        
+        function setupTestEvents() {
+            // 添加测试图片
+            document.getElementById('addTestImages').addEventListener('click', () => {
+                addTestImages();
+                addTestResult('添加测试图片', 'success', '已添加包含不同分类和标签的测试图片');
+                updateStatus('测试图片已添加，可以测试其他功能');
+                
+                // 启用其他测试按钮
+                document.getElementById('testImageDetails').disabled = false;
+                document.getElementById('testNoteAssociation').disabled = false;
+            });
+            
+            // 添加测试笔记
+            document.getElementById('addTestNotes').addEventListener('click', () => {
+                addTestNotes();
+                addTestResult('添加测试笔记', 'success', '已添加测试笔记用于关联功能测试');
+            });
+            
+            // 测试图片详情
+            document.getElementById('testImageDetails').addEventListener('click', () => {
+                testImageDetails();
+            });
+            
+            // 测试笔记关联
+            document.getElementById('testNoteAssociation').addEventListener('click', () => {
+                testNoteAssociation();
+            });
+            
+            // 清空测试数据
+            document.getElementById('clearTestData').addEventListener('click', () => {
+                clearTestData();
+                addTestResult('清空数据', 'success', '已清空所有测试数据');
+                updateStatus('测试数据已清空，可以重新开始测试');
+                
+                // 禁用测试按钮
+                document.getElementById('testImageDetails').disabled = true;
+                document.getElementById('testNoteAssociation').disabled = true;
+            });
+        }
+        
+        function addTestImages() {
+            // 清空现有图片
+            window.knowledgeBase.data.images = [];
+            
+            const testImages = [
+                {
+                    id: 'test-img-1',
+                    name: '动漫角色图片.jpg',
+                    category: 'images',
+                    imageCategory: 'anime',
+                    tags: ['动漫', '角色', '二次元'],
+                    description: '这是一张动漫角色的图片，展示了精美的二次元画风',
+                    uploadDate: new Date().toISOString(),
+                    size: 250000,
+                    compressed: true,
+                    dataUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjQ3MmI2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7liqjmvKvop5LoibI8L3RleHQ+PC9zdmc+',
+                    originalDataUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjQ3MmI2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7liqjmvKvop5LoibLvvIjljp/lm77vvIk8L3RleHQ+PC9zdmc+',
+                    metadata: { width: 600, height: 400, aspectRatio: 1.5 }
+                },
+                {
+                    id: 'test-img-2',
+                    name: '美丽风景.jpg',
+                    category: 'images',
+                    imageCategory: 'landscape',
+                    tags: ['风景', '自然', '山脉'],
+                    description: '壮观的山脉风景图',
+                    uploadDate: new Date(Date.now() - 86400000).toISOString(), // 昨天
+                    size: 180000,
+                    compressed: true,
+                    dataUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTBiOTgxIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7po47mma88L3RleHQ+PC9zdmc+',
+                    originalDataUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTBiOTgxIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7po47mma/vvIjljp/lm77vvIk8L3RleHQ+PC9zdmc+',
+                    metadata: { width: 600, height: 400, aspectRatio: 1.5 }
+                },
+                {
+                    id: 'test-img-3',
+                    name: 'UI设计稿.png',
+                    category: 'images',
+                    imageCategory: 'design',
+                    tags: ['设计', 'UI', '界面', '素材', '创意'],
+                    description: '移动应用UI设计稿',
+                    uploadDate: new Date(Date.now() - 172800000).toISOString(), // 两天前
+                    size: 320000,
+                    compressed: false,
+                    dataUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjU5ZTBiIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7orr7orqHntKDmnZo8L3RleHQ+PC9zdmc+',
+                    metadata: { width: 300, height: 200, aspectRatio: 1.5 }
+                }
+            ];
+            
+            // 添加测试图片到数据
+            testImages.forEach(img => {
+                window.knowledgeBase.data.images.push(img);
+            });
+            
+            // 更新标签数据
+            const allTags = [];
+            testImages.forEach(img => {
+                img.tags.forEach(tag => {
+                    if (!allTags.find(t => t.name === tag)) {
+                        allTags.push({
+                            id: window.knowledgeBase.generateId(),
+                            name: tag,
+                            count: testImages.filter(i => i.tags.includes(tag)).length,
+                            color: window.knowledgeBase.generateTagColor(),
+                            createdAt: new Date().toISOString()
+                        });
+                    }
+                });
+            });
+            window.knowledgeBase.data.imageTags = allTags;
+            
+            // 保存数据并刷新显示
+            window.knowledgeBase.saveData();
+            window.knowledgeBase.updateImageFilterOptions();
+            refreshImageDisplay();
+        }
+        
+        function addTestNotes() {
+            const testNotes = [
+                {
+                    id: 'test-note-1',
+                    title: '动漫角色设计笔记',
+                    content: '这个角色的设计非常有特色，色彩搭配很棒，值得学习和参考。',
+                    category: 'notes',
+                    tags: ['动漫', '设计'],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                },
+                {
+                    id: 'test-note-2',
+                    title: '风景摄影技巧',
+                    content: '拍摄山脉风景时要注意构图和光线，黄金时段的效果最佳。',
+                    category: 'notes',
+                    tags: ['摄影', '风景'],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                },
+                {
+                    id: 'test-note-3',
+                    title: 'UI设计规范',
+                    content: '移动应用的UI设计需要考虑用户体验和视觉层次，颜色搭配要协调。',
+                    category: 'notes',
+                    tags: ['UI', '设计', '规范'],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                }
+            ];
+            
+            testNotes.forEach(note => {
+                window.knowledgeBase.data.notes.push(note);
+            });
+            
+            window.knowledgeBase.saveData();
+            window.knowledgeBase.updateStats();
+        }
+        
+        function testImageDetails() {
+            const firstImage = window.knowledgeBase.data.images[0];
+            if (firstImage) {
+                window.knowledgeBase.showImageDetailModal(firstImage.id);
+                addTestResult('图片详情', 'success', '成功打开图片详情模态框');
+            } else {
+                addTestResult('图片详情', 'error', '没有找到测试图片');
+            }
+        }
+        
+        function testNoteAssociation() {
+            // 自动创建一些关联
+            const image1 = window.knowledgeBase.data.images.find(img => img.name.includes('动漫'));
+            const note1 = window.knowledgeBase.data.notes.find(note => note.title.includes('动漫'));
+            
+            if (image1 && note1) {
+                window.knowledgeBase.data.imageNoteAssociations.push({
+                    id: window.knowledgeBase.generateId(),
+                    imageId: image1.id,
+                    noteId: note1.id,
+                    createdAt: new Date().toISOString()
+                });
+                
+                window.knowledgeBase.saveData();
+                refreshImageDisplay();
+                addTestResult('笔记关联', 'success', '成功创建图片与笔记的关联');
+            } else {
+                addTestResult('笔记关联', 'error', '未找到测试数据');
+            }
+        }
+        
+        function clearTestData() {
+            window.knowledgeBase.data.images = [];
+            window.knowledgeBase.data.notes = [];
+            window.knowledgeBase.data.imageTags = [];
+            window.knowledgeBase.data.imageNoteAssociations = [];
+            window.knowledgeBase.saveData();
+            window.knowledgeBase.updateImageFilterOptions();
+            refreshImageDisplay();
+            testResults = [];
+            updateTestResults();
+        }
+        
+        function refreshImageDisplay() {
+            const container = document.getElementById('imagesGrid');
+            container.innerHTML = '';
+            
+            if (window.knowledgeBase.data.images.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">暂无图片数据</div>';
+                return;
+            }
+            
+            window.knowledgeBase.data.images.forEach((image, index) => {
+                const card = window.knowledgeBase.createImageCard(image, index);
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

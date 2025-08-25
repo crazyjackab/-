@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片拖拽修复测试</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            color: #4f46e5;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin: 10px 0;
+        }
+        .status-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .status-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+        .test-instructions {
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .test-instructions h4 {
+            color: #1e40af;
+            margin-bottom: 10px;
+        }
+        .test-steps {
+            list-style: none;
+            padding: 0;
+        }
+        .test-steps li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .test-steps li:last-child {
+            border-bottom: none;
+        }
+        .test-steps li::before {
+            content: "📋";
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-section">
+            <h1 class="test-title">
+                <i class="fas fa-bug"></i>
+                图片拖拽修复验证测试
+            </h1>
+            <p>这个页面用于测试修复后的图片拖拽功能，确保拖拽图片调整顺序时不会误触发"添加新内容"弹窗。</p>
+            
+            <div class="status-indicator status-success">
+                <i class="fas fa-check-circle"></i>
+                修复代码已应用
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">
+                <i class="fas fa-clipboard-list"></i>
+                测试说明
+            </h2>
+            
+            <div class="test-instructions">
+                <h4>🎯 测试目标</h4>
+                <p>验证在图片收藏页面拖拽图片进行排序时，不会意外触发"添加新内容"模态框。</p>
+                
+                <h4>🔧 修复内容</h4>
+                <ul>
+                    <li>✅ 添加了 <code>isImageDragging()</code> 方法来区分图片内部拖拽和外部文件拖拽</li>
+                    <li>✅ 在图片拖拽时设置特殊数据类型标记 <code>application/x-image-reorder</code></li>
+                    <li>✅ 修改全局拖拽事件监听器，只在真正的外部文件拖拽时触发模态框</li>
+                </ul>
+            </div>
+
+            <div class="test-instructions">
+                <h4>📝 测试步骤</h4>
+                <ol class="test-steps">
+                    <li>点击下方按钮打开主页面并切换到图片收藏页面</li>
+                    <li>添加几张测试图片（如果没有的话）</li>
+                    <li>尝试拖拽图片调整顺序</li>
+                    <li>观察是否会意外弹出"添加新内容"模态框</li>
+                    <li>从外部拖拽文件到页面，验证模态框是否正常弹出</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">
+                <i class="fas fa-play"></i>
+                开始测试
+            </h2>
+            
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <a href="index.html#images" class="btn btn-primary" target="_blank">
+                    <i class="fas fa-external-link-alt"></i>
+                    打开图片收藏页面
+                </a>
+                
+                <a href="test-image-bulk.html" class="btn btn-secondary" target="_blank">
+                    <i class="fas fa-flask"></i>
+                    测试页面（含测试数据）
+                </a>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">
+                <i class="fas fa-code"></i>
+                修复代码详情
+            </h2>
+            
+            <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; font-family: monospace; font-size: 0.9rem;">
+                <strong>1. 新增 isImageDragging() 方法：</strong>
+                <pre style="margin: 10px 0; color: #374151;">
+// 检查是否为图片内部拖拽（用于排序）
+isImageDragging(e) {
+    // 检查拖拽数据是否包含图片排序的特殊标记
+    if (e.dataTransfer.types.includes('application/x-image-reorder')) {
+        return true;
+    }
+    // ... 其他检查逻辑
+}</pre>
+
+                <strong>2. 修改图片拖拽事件：</strong>
+                <pre style="margin: 10px 0; color: #374151;">
+// 设置拖拽数据，标记为图片内部拖拽
+e.dataTransfer.setData('application/x-image-reorder', image.id);</pre>
+
+                <strong>3. 优化全局拖拽监听器：</strong>
+                <pre style="margin: 10px 0; color: #374151;">
+document.addEventListener('dragenter', (e) => {
+    // 检查是否是外部文件拖拽（不是图片内部拖拽排序）
+    if (e.dataTransfer.types.includes('Files') && !this.isImageDragging(e)) {
+        // 只有外部文件拖拽才触发模态框
+        this.showAddContentModal();
+    }
+});</pre>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">
+                <i class="fas fa-check-circle"></i>
+                期望结果
+            </h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div style="background: #dcfce7; padding: 20px; border-radius: 8px; border: 1px solid #bbf7d0;">
+                    <h4 style="color: #166534; margin-bottom: 10px;">
+                        <i class="fas fa-arrows-alt"></i>
+                        图片拖拽排序
+                    </h4>
+                    <p style="color: #166534; margin: 0;">拖拽图片调整顺序时，不会弹出"添加新内容"模态框，只会进行正常的排序操作。</p>
+                </div>
+                
+                <div style="background: #dbeafe; padding: 20px; border-radius: 8px; border: 1px solid #bfdbfe;">
+                    <h4 style="color: #1e40af; margin-bottom: 10px;">
+                        <i class="fas fa-file-upload"></i>
+                        外部文件拖拽
+                    </h4>
+                    <p style="color: #1e40af; margin: 0;">从外部拖拽文件到页面时，会正常弹出"添加新内容"模态框进行文件上传。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // 监控测试过程
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🧪 图片拖拽修复测试页面已加载');
+            console.log('🔧 修复内容：');
+            console.log('   - 添加 isImageDragging() 方法区分拖拽类型');
+            console.log('   - 图片拖拽时设置特殊数据类型标记');
+            console.log('   - 优化全局拖拽事件监听器逻辑');
+            console.log('📋 请按照测试步骤进行验证');
+        });
+
+        // 添加一些调试信息
+        if (window.knowledgeBase) {
+            console.log('✅ KnowledgeBase 系统已加载');
+        } else {
+            console.log('❌ KnowledgeBase 系统未加载');
+        }
+    </script>
+</body>
+</html>

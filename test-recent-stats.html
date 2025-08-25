@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试近7天新增量功能</title>
+    <style>
+        :root {
+            /* 颜色主题 */
+            --primary-color: #6366f1;
+            --primary-hover: #5856eb;
+            --secondary-color: #f3f4f6;
+            --accent-color: #10b981;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            
+            /* 背景颜色 */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: #ffffff;
+            
+            /* 文字颜色 */
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --text-white: #ffffff;
+            
+            /* 边框和阴影 */
+            --border-color: #e2e8f0;
+            --border-radius: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            /* 间距 */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--text-primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .stat-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--border-radius);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .stat-info h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-info p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        /* 近7天新增统计样式 */
+        .recent-stats {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+            padding-top: var(--spacing-sm);
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .recent-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .recent-count {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .recent-count.positive {
+            color: var(--success-color);
+        }
+
+        .recent-unit {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .controls {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input, button {
+            padding: 10px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+        }
+
+        button {
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>近7天新增量功能测试</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="testDataCount">测试数据数量:</label>
+                <input type="number" id="testDataCount" value="5" min="1" max="100">
+            </div>
+            <div class="control-group">
+                <label for="daysAgo">数据创建天数前:</label>
+                <input type="number" id="daysAgo" value="3" min="0" max="30">
+            </div>
+            <button id="addTestData">添加测试数据</button>
+            <button id="updateStats">更新统计</button>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-file-text">📄</i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="documentsCount">0</h3>
+                    <p>文档资料</p>
+                    <div class="recent-stats">
+                        <span class="recent-label">近7天新增：</span>
+                        <span class="recent-count" id="documentsRecentCount">0</span>
+                        <span class="recent-unit">篇</span>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-image">🖼️</i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="imagesCount">0</h3>
+                    <p>图片收藏</p>
+                    <div class="recent-stats">
+                        <span class="recent-label">近7天新增：</span>
+                        <span class="recent-count" id="imagesRecentCount">0</span>
+                        <span class="recent-unit">张</span>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-video">🎬</i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="videosCount">0</h3>
+                    <p>视频资源</p>
+                    <div class="recent-stats">
+                        <span class="recent-label">近7天新增：</span>
+                        <span class="recent-count" id="videosRecentCount">0</span>
+                        <span class="recent-unit">个</span>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-link">🔗</i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="linksCount">0</h3>
+                    <p>链接收藏</p>
+                    <div class="recent-stats">
+                        <span class="recent-label">近7天新增：</span>
+                        <span class="recent-count" id="linksRecentCount">0</span>
+                        <span class="recent-unit">条</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="result" id="result">
+            <h3>测试结果</h3>
+            <p id="resultText">点击按钮查看结果</p>
+        </div>
+    </div>
+
+    <script>
+        // 模拟数据存储
+        const testData = {
+            documents: [],
+            images: [],
+            videos: [],
+            links: []
+        };
+
+        // 计算近7天新增量
+        function getRecentCount(items) {
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            
+            return items.filter(item => {
+                const uploadDate = new Date(item.uploadDate || item.createdAt);
+                return uploadDate >= sevenDaysAgo;
+            }).length;
+        }
+
+        // 更新统计显示
+        function updateStats() {
+            // 更新总数
+            document.getElementById('documentsCount').textContent = testData.documents.length;
+            document.getElementById('imagesCount').textContent = testData.images.length;
+            document.getElementById('videosCount').textContent = testData.videos.length;
+            document.getElementById('linksCount').textContent = testData.links.length;
+            
+            // 更新近7天新增量
+            const recentDocuments = getRecentCount(testData.documents);
+            const recentImages = getRecentCount(testData.images);
+            const recentVideos = getRecentCount(testData.videos);
+            const recentLinks = getRecentCount(testData.links);
+            
+            // 更新DOM显示
+            updateRecentStatDisplay('documents', recentDocuments);
+            updateRecentStatDisplay('images', recentImages);
+            updateRecentStatDisplay('videos', recentVideos);
+            updateRecentStatDisplay('links', recentLinks);
+            
+            // 显示结果
+            const result = document.getElementById('result');
+            const resultText = document.getElementById('resultText');
+            resultText.innerHTML = `
+                文档资料总数: ${testData.documents.length} (近7天新增: ${recentDocuments})<br>
+                图片收藏总数: ${testData.images.length} (近7天新增: ${recentImages})<br>
+                视频资源总数: ${testData.videos.length} (近7天新增: ${recentVideos})<br>
+                链接收藏总数: ${testData.links.length} (近7天新增: ${recentLinks})
+            `;
+            result.className = 'result show';
+        }
+
+        // 更新单个近7天新增统计显示
+        function updateRecentStatDisplay(category, count) {
+            const element = document.getElementById(`${category}RecentCount`);
+            if (element) {
+                element.textContent = count;
+                // 根据数量显示不同的颜色
+                if (count > 0) {
+                    element.className = 'recent-count positive';
+                } else {
+                    element.className = 'recent-count';
+                }
+            }
+        }
+
+        // 添加测试数据
+        function addTestData() {
+            const count = parseInt(document.getElementById('testDataCount').value) || 5;
+            const daysAgo = parseInt(document.getElementById('daysAgo').value) || 3;
+            
+            // 创建指定天数前的日期
+            const createDate = new Date();
+            createDate.setDate(createDate.getDate() - daysAgo);
+            
+            // 添加测试数据到各个分类
+            for (let i = 0; i < count; i++) {
+                testData.documents.push({
+                    id: `doc-${Date.now()}-${i}`,
+                    name: `测试文档${i+1}.pdf`,
+                    uploadDate: createDate.toISOString()
+                });
+                
+                testData.images.push({
+                    id: `img-${Date.now()}-${i}`,
+                    name: `测试图片${i+1}.jpg`,
+                    uploadDate: createDate.toISOString()
+                });
+                
+                testData.videos.push({
+                    id: `vid-${Date.now()}-${i}`,
+                    name: `测试视频${i+1}.mp4`,
+                    uploadDate: createDate.toISOString()
+                });
+                
+                testData.links.push({
+                    id: `link-${Date.now()}-${i}`,
+                    title: `测试链接${i+1}`,
+                    uploadDate: createDate.toISOString()
+                });
+            }
+            
+            updateStats();
+        }
+
+        // 页面加载完成后绑定事件
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('addTestData').addEventListener('click', addTestData);
+            document.getElementById('updateStats').addEventListener('click', updateStats);
+            
+            // 初始化显示
+            updateStats();
+        });
+    </script>
+</body>
+</html>

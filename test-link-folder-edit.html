@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试链接编辑中的文件夹选择功能</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #6366f1;
+            background: #f8fafc;
+        }
+        .test-button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            border-left: 4px solid #22c55e;
+        }
+        .error {
+            background: #fef2f2;
+            color: #dc2626;
+            border-left: 4px solid #ef4444;
+        }
+        .info {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-left: 4px solid #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🔗 链接编辑文件夹选择功能测试</h1>
+            <p>测试在链接编辑中添加文件夹选择功能</p>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 测试步骤</h3>
+            <ol>
+                <li>首先添加测试数据（文件夹和链接）</li>
+                <li>打开链接收藏页面</li>
+                <li>点击链接的编辑按钮</li>
+                <li>检查编辑模态框中是否有文件夹选择器</li>
+                <li>测试更改文件夹并保存</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 执行测试</h3>
+            <button class="test-button" onclick="addTestData()">1. 添加测试数据</button>
+            <button class="test-button" onclick="openLinksPage()">2. 打开链接页面</button>
+            <button class="test-button" onclick="testEditFunction()">3. 测试编辑功能</button>
+            <button class="test-button" onclick="checkFolderSelector()">4. 检查文件夹选择器</button>
+            <button class="test-button" onclick="clearTestData()">清空测试数据</button>
+        </div>
+
+        <div id="testResults"></div>
+
+        <div class="test-section">
+            <h3>💡 使用说明</h3>
+            <p><strong>预期行为：</strong></p>
+            <ul>
+                <li>在链接编辑表单中应该能看到"所属文件夹"选择器</li>
+                <li>选择器应该列出所有可用的文件夹</li>
+                <li>加密文件夹会有锁图标 🔒 标识</li>
+                <li>更改文件夹后保存，链接应该移动到新文件夹</li>
+                <li>界面会自动更新文件夹标签的链接数量</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function addTestResult(title, type, message) {
+            const resultsDiv = document.getElementById('testResults');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${type}`;
+            resultDiv.innerHTML = `<strong>${title}：</strong>${message}`;
+            resultsDiv.appendChild(resultDiv);
+            console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
+        }
+
+        function addTestData() {
+            if (!window.knowledgeBase) {
+                addTestResult('初始化检查', 'error', '知识库系统未初始化，请先加载主页面');
+                return;
+            }
+
+            try {
+                // 添加测试文件夹
+                const testFolders = [
+                    {
+                        id: window.knowledgeBase.generateId(),
+                        name: '工作资料',
+                        description: '工作相关的链接',
+                        color: '#6366f1',
+                        icon: 'fas fa-briefcase',
+                        isEncrypted: false,
+                        password: null,
+                        isDefault: false,
+                        createdAt: new Date().toISOString(),
+                        linkCount: 0
+                    },
+                    {
+                        id: window.knowledgeBase.generateId(),
+                        name: '学习资源',
+                        description: '学习相关的链接',
+                        color: '#10b981',
+                        icon: 'fas fa-graduation-cap',
+                        isEncrypted: false,
+                        password: null,
+                        isDefault: false,
+                        createdAt: new Date().toISOString(),
+                        linkCount: 0
+                    },
+                    {
+                        id: window.knowledgeBase.generateId(),
+                        name: '私人收藏',
+                        description: '私人收藏的链接',
+                        color: '#f59e0b',
+                        icon: 'fas fa-heart',
+                        isEncrypted: true,
+                        password: 'test123',
+                        isDefault: false,
+                        createdAt: new Date().toISOString(),
+                        linkCount: 0
+                    }
+                ];
+
+                // 添加文件夹到数据中
+                testFolders.forEach(folder => {
+                    const exists = window.knowledgeBase.data.linkFolders.find(f => f.name === folder.name);
+                    if (!exists) {
+                        window.knowledgeBase.data.linkFolders.push(folder);
+                    }
+                });
+
+                // 添加测试链接
+                const testLinks = [
+                    {
+                        id: window.knowledgeBase.generateId(),
+                        url: 'https://github.com',
+                        title: 'GitHub',
+                        description: '代码托管平台',
+                        tags: ['开发', '代码'],
+                        folderId: 'default',
+                        uploadDate: new Date().toISOString(),
+                        category: 'links'
+                    },
+                    {
+                        id: window.knowledgeBase.generateId(),
+                        url: 'https://stackoverflow.com',
+                        title: 'Stack Overflow',
+                        description: '程序员问答社区',
+                        tags: ['编程', '问答'],
+                        folderId: testFolders[1].id, // 学习资源文件夹
+                        uploadDate: new Date().toISOString(),
+                        category: 'links'
+                    }
+                ];
+
+                testLinks.forEach(link => {
+                    window.knowledgeBase.data.links.push(link);
+                });
+
+                // 保存数据并更新界面
+                window.knowledgeBase.saveData();
+                window.knowledgeBase.updateFolderLinkCounts();
+                
+                addTestResult('测试数据', 'success', `已添加 ${testFolders.length} 个文件夹和 ${testLinks.length} 个链接`);
+                
+                // 输出数据信息
+                console.log('文件夹列表:', window.knowledgeBase.data.linkFolders);
+                console.log('链接列表:', window.knowledgeBase.data.links);
+                
+            } catch (error) {
+                addTestResult('测试数据', 'error', `添加测试数据失败: ${error.message}`);
+            }
+        }
+
+        function openLinksPage() {
+            if (!window.knowledgeBase) {
+                addTestResult('导航测试', 'error', '知识库系统未初始化');
+                return;
+            }
+
+            try {
+                // 切换到链接页面
+                window.knowledgeBase.showSection('links');
+                addTestResult('导航测试', 'success', '已切换到链接收藏页面');
+                
+                // 等待一下让界面更新
+                setTimeout(() => {
+                    const linksGrid = document.getElementById('linksGrid');
+                    if (linksGrid && linksGrid.children.length > 0) {
+                        addTestResult('界面检查', 'success', `找到 ${linksGrid.children.length} 个链接卡片`);
+                    } else {
+                        addTestResult('界面检查', 'error', '未找到链接卡片');
+                    }
+                }, 500);
+                
+            } catch (error) {
+                addTestResult('导航测试', 'error', `切换页面失败: ${error.message}`);
+            }
+        }
+
+        function testEditFunction() {
+            try {
+                // 查找第一个编辑按钮
+                const editButtons = document.querySelectorAll('button[title="编辑"]');
+                if (editButtons.length === 0) {
+                    addTestResult('编辑按钮', 'error', '未找到编辑按钮，请先打开链接页面');
+                    return;
+                }
+
+                // 点击第一个编辑按钮
+                editButtons[0].click();
+                addTestResult('编辑按钮', 'success', '成功点击编辑按钮');
+
+                // 等待模态框打开
+                setTimeout(() => {
+                    const modal = document.getElementById('editContentModal');
+                    if (modal && modal.classList.contains('active')) {
+                        addTestResult('编辑模态框', 'success', '编辑模态框已打开');
+                        checkFolderSelector();
+                    } else {
+                        addTestResult('编辑模态框', 'error', '编辑模态框未打开');
+                    }
+                }, 300);
+                
+            } catch (error) {
+                addTestResult('编辑测试', 'error', `编辑功能测试失败: ${error.message}`);
+            }
+        }
+
+        function checkFolderSelector() {
+            try {
+                const folderSelector = document.getElementById('editLinkFolder');
+                if (!folderSelector) {
+                    addTestResult('文件夹选择器', 'error', '未找到文件夹选择器元素');
+                    return;
+                }
+
+                addTestResult('文件夹选择器', 'success', '找到文件夹选择器');
+
+                // 检查选项数量
+                const options = folderSelector.options;
+                if (options.length > 0) {
+                    addTestResult('选择器选项', 'success', `文件夹选择器包含 ${options.length} 个选项`);
+                    
+                    // 列出所有选项
+                    const optionTexts = Array.from(options).map(opt => opt.textContent).join(', ');
+                    addTestResult('选项内容', 'info', `选项：${optionTexts}`);
+
+                    // 检查是否有加密文件夹标识
+                    const hasLockIcon = Array.from(options).some(opt => opt.textContent.includes('🔒'));
+                    if (hasLockIcon) {
+                        addTestResult('加密标识', 'success', '检测到加密文件夹标识 🔒');
+                    }
+
+                    // 测试选择器交互
+                    if (options.length > 1) {
+                        folderSelector.selectedIndex = 1;
+                        const selectedText = folderSelector.options[folderSelector.selectedIndex].textContent;
+                        addTestResult('选择器交互', 'success', `成功选择：${selectedText}`);
+                    }
+
+                } else {
+                    addTestResult('选择器选项', 'error', '文件夹选择器没有选项');
+                }
+
+                // 检查样式
+                const hasCorrectClass = folderSelector.classList.contains('folder-selector');
+                if (hasCorrectClass) {
+                    addTestResult('样式检查', 'success', '文件夹选择器应用了正确的CSS类');
+                } else {
+                    addTestResult('样式检查', 'error', '文件夹选择器缺少CSS类');
+                }
+
+            } catch (error) {
+                addTestResult('选择器检查', 'error', `检查文件夹选择器失败: ${error.message}`);
+            }
+        }
+
+        function clearTestData() {
+            if (!window.knowledgeBase) {
+                addTestResult('清理', 'error', '知识库系统未初始化');
+                return;
+            }
+
+            try {
+                // 保留默认文件夹，删除测试文件夹
+                window.knowledgeBase.data.linkFolders = window.knowledgeBase.data.linkFolders.filter(
+                    folder => folder.isDefault
+                );
+                
+                // 清空链接
+                window.knowledgeBase.data.links = [];
+                
+                // 保存数据
+                window.knowledgeBase.saveData();
+                window.knowledgeBase.updateFolderLinkCounts();
+                
+                addTestResult('清理', 'success', '已清空测试数据');
+                
+                // 关闭模态框（如果打开）
+                const modal = document.getElementById('editContentModal');
+                if (modal && modal.classList.contains('active')) {
+                    modal.classList.remove('active');
+                }
+                
+            } catch (error) {
+                addTestResult('清理', 'error', `清理数据失败: ${error.message}`);
+            }
+        }
+
+        // 页面加载完成后的初始检查
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                if (window.knowledgeBase) {
+                    addTestResult('系统检查', 'success', '知识库系统已加载');
+                } else {
+                    addTestResult('系统检查', 'error', '知识库系统未加载，请在主页面中打开此测试');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档分类功能演示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .demo-header {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .demo-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        .icon {
+            color: #4CAF50;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        .highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .implementation-steps {
+            background: #f8f9fa;
+            border-left: 4px solid #4CAF50;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 10px 5px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-header">
+        <h1>🗂️ 文档分类功能演示</h1>
+        <p>为您的知识库网站添加强大的文档分类和筛选功能</p>
+    </div>
+
+    <div class="demo-section">
+        <h2>✨ 功能特性</h2>
+        <ul class="feature-list">
+            <li>
+                <span class="icon">📋</span>
+                <strong>智能文件类型识别</strong> - 自动识别PDF、Word、Excel、PPT、文本等文档类型
+            </li>
+            <li>
+                <span class="icon">🏷️</span>
+                <strong>标签分类筛选</strong> - 按照自定义标签对文档进行分类和筛选
+            </li>
+            <li>
+                <span class="icon">🔄</span>
+                <strong>多维度排序</strong> - 支持按时间、名称、大小、类型等多种方式排序
+            </li>
+            <li>
+                <span class="icon">📊</span>
+                <strong>实时统计信息</strong> - 显示文档数量、存储空间、类型分布等统计数据
+            </li>
+            <li>
+                <span class="icon">🎯</span>
+                <strong>一键快捷筛选</strong> - 点击统计卡片即可快速筛选对应类型文档
+            </li>
+            <li>
+                <span class="icon">🔍</span>
+                <strong>组合筛选</strong> - 支持同时按类型、标签、排序等多个条件筛选
+            </li>
+        </ul>
+    </div>
+
+    <div class="demo-section">
+        <h2>🚀 核心功能实现</h2>
+        
+        <div class="highlight">
+            <h3>1. 筛选器界面</h3>
+            <p>添加了直观的筛选控件，包括文件类型选择、标签分类、排序方式等</p>
+        </div>
+
+        <div class="code-block">
+&lt;div class="document-filters"&gt;
+    &lt;div class="filter-group"&gt;
+        &lt;label for="docTypeFilter"&gt;文件类型：&lt;/label&gt;
+        &lt;select id="docTypeFilter" class="filter-select"&gt;
+            &lt;option value="all"&gt;所有类型&lt;/option&gt;
+            &lt;option value="pdf"&gt;PDF 文档&lt;/option&gt;
+            &lt;option value="word"&gt;Word 文档&lt;/option&gt;
+            &lt;option value="excel"&gt;Excel 表格&lt;/option&gt;
+            &lt;option value="powerpoint"&gt;PPT 演示&lt;/option&gt;
+            &lt;option value="text"&gt;文本文件&lt;/option&gt;
+            &lt;option value="other"&gt;其他文件&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+    &lt;!-- 更多筛选组件... --&gt;
+&lt;/div&gt;
+        </div>
+
+        <div class="highlight">
+            <h3>2. 统计信息显示</h3>
+            <p>实时显示文档统计信息，并支持点击快速筛选</p>
+        </div>
+
+        <div class="code-block">
+// 更新文档统计信息
+updateDocumentStats(filteredCount = null) {
+    const statsContainer = document.getElementById('documentStats');
+    if (!statsContainer) return;
+    
+    const totalCount = this.data.documents.length;
+    const displayCount = filteredCount !== null ? filteredCount : totalCount;
+    
+    // 按类型统计
+    const typeStats = {};
+    this.data.documents.forEach(doc => {
+        const type = this.getDocumentType(doc.name, doc.type).type;
+        typeStats[type] = (typeStats[type] || 0) + 1;
+    });
+    
+    // 生成统计界面...
+}
+        </div>
+
+        <div class="highlight">
+            <h3>3. 智能筛选算法</h3>
+            <p>支持多条件组合筛选和多种排序方式</p>
+        </div>
+
+        <div class="code-block">
+// 显示筛选后的文档
+displayFilteredDocuments() {
+    // 获取筛选条件
+    const typeFilter = document.getElementById('docTypeFilter')?.value || 'all';
+    const tagFilter = document.getElementById('docTagFilter')?.value || 'all';
+    const sortFilter = document.getElementById('docSortFilter')?.value || 'newest';
+    
+    // 筛选文档
+    let filteredDocs = this.data.documents.filter(doc => {
+        // 类型筛选
+        if (typeFilter !== 'all') {
+            const docType = this.getDocumentType(doc.name, doc.type).type;
+            if (docType !== typeFilter) return false;
+        }
+        
+        // 标签筛选
+        if (tagFilter !== 'all') {
+            if (!doc.tags || !doc.tags.includes(tagFilter)) return false;
+        }
+        
+        return true;
+    });
+    
+    // 排序和显示...
+}
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>🔧 实现步骤</h2>
+        
+        <div class="implementation-steps">
+            <h3>步骤 1: HTML 结构</h3>
+            <p>✅ 在文档区域添加筛选器和统计信息的HTML结构</p>
+        </div>
+
+        <div class="implementation-steps">
+            <h3>步骤 2: CSS 样式</h3>
+            <p>✅ 添加了217行CSS样式，包括筛选器、统计卡片、响应式布局等</p>
+        </div>
+
+        <div class="implementation-steps">
+            <h3>步骤 3: JavaScript 逻辑</h3>
+            <p>✅ 实现了完整的分类筛选逻辑，包括:</p>
+            <ul>
+                <li>setupDocumentFilters() - 筛选器初始化</li>
+                <li>displayFilteredDocuments() - 筛选显示</li>
+                <li>updateDocumentStats() - 统计更新</li>
+                <li>sortDocuments() - 文档排序</li>
+                <li>clearDocumentFilters() - 筛选重置</li>
+            </ul>
+        </div>
+
+        <div class="implementation-steps">
+            <h3>步骤 4: 功能集成</h3>
+            <p>✅ 集成到现有的showDocuments()函数中，确保无缝工作</p>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>📱 支持的功能</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0;">
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196f3;">
+                <h4 style="margin: 0 0 10px 0; color: #1976d2;">📄 文件类型筛选</h4>
+                <p style="margin: 0; font-size: 14px;">PDF、Word、Excel、PPT、文本、其他</p>
+            </div>
+            
+            <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; border-left: 4px solid #9c27b0;">
+                <h4 style="margin: 0 0 10px 0; color: #7b1fa2;">🏷️ 标签筛选</h4>
+                <p style="margin: 0; font-size: 14px;">动态加载用户自定义标签</p>
+            </div>
+            
+            <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; border-left: 4px solid #4caf50;">
+                <h4 style="margin: 0 0 10px 0; color: #388e3c;">🔄 排序方式</h4>
+                <p style="margin: 0; font-size: 14px;">最新、最旧、名称、大小、类型</p>
+            </div>
+            
+            <div style="background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                <h4 style="margin: 0 0 10px 0; color: #f57c00;">📊 实时统计</h4>
+                <p style="margin: 0; font-size: 14px;">文档数量、存储空间、类型分布</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>🎉 使用说明</h2>
+        <ol style="line-height: 1.8;">
+            <li><strong>切换到文档页面:</strong> 点击侧边栏的"文档资料"进入文档管理页面</li>
+            <li><strong>添加测试数据:</strong> 使用"添加内容"按钮上传一些文档文件</li>
+            <li><strong>使用筛选器:</strong> 在页面顶部的筛选区域选择文件类型、标签或排序方式</li>
+            <li><strong>查看统计:</strong> 观察统计信息的实时更新，点击类型卡片快速筛选</li>
+            <li><strong>清除筛选:</strong> 点击"清除筛选"按钮重置所有筛选条件</li>
+        </ol>
+    </div>
+
+    <div class="demo-section">
+        <h2>🔗 相关文件</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                <h4 style="margin: 0 0 10px 0;">📄 index.html</h4>
+                <p style="margin: 0; font-size: 14px; color: #666;">添加了筛选器HTML结构</p>
+            </div>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                <h4 style="margin: 0 0 10px 0;">🎨 styles.css</h4>
+                <p style="margin: 0; font-size: 14px; color: #666;">新增217行分类样式</p>
+            </div>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                <h4 style="margin: 0 0 10px 0;">⚙️ script.js</h4>
+                <p style="margin: 0; font-size: 14px; color: #666;">实现完整分类逻辑</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin: 40px 0;">
+        <a href="index.html" class="btn">🚀 体验文档分类功能</a>
+        <a href="test-doc-filters.html" class="btn btn-secondary">🧪 查看测试页面</a>
+    </div>
+
+    <div class="demo-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <h2 style="color: white;">✅ 功能已完成</h2>
+        <p>文档分类功能已经成功集成到您的知识库网站中！您现在可以:</p>
+        <ul style="list-style: none; padding: 0;">
+            <li style="padding: 5px 0;">✅ 按文件类型筛选文档(PDF、Word、Excel等)</li>
+            <li style="padding: 5px 0;">✅ 按标签分类查看文档</li>
+            <li style="padding: 5px 0;">✅ 使用多种排序方式</li>
+            <li style="padding: 5px 0;">✅ 查看实时统计信息</li>
+            <li style="padding: 5px 0;">✅ 组合使用多个筛选条件</li>
+            <li style="padding: 5px 0;">✅ 一键重置筛选条件</li>
+        </ul>
+    </div>
+</body>
+</html>

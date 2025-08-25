@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复选框修复测试</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            background-color: var(--bg-primary);
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-radius: 12px;
+        }
+        
+        .test-status {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #0c4a6e;
+        }
+        
+        .test-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .debug-info {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1><i class="fas fa-bug-slash"></i> 图片批量选择修复测试</h1>
+            <p>测试单独选择图片时复选框是否正确显示勾选状态</p>
+        </div>
+        
+        <div class="test-status" id="testStatus">
+            <i class="fas fa-info-circle"></i> 准备就绪，点击"进入批量模式"开始测试
+        </div>
+        
+        <div class="test-actions">
+            <button id="testAddImages" class="btn-primary">
+                <i class="fas fa-plus"></i> 添加测试图片
+            </button>
+            <button id="testBulkMode" class="btn-secondary">
+                <i class="fas fa-check-square"></i> 进入批量模式
+            </button>
+            <button id="testSelectFirst" class="btn-secondary" disabled>
+                <i class="fas fa-mouse-pointer"></i> 选择第一张图片
+            </button>
+            <button id="testSelectSecond" class="btn-secondary" disabled>
+                <i class="fas fa-mouse-pointer"></i> 选择第二张图片
+            </button>
+            <button id="testClearAll" class="btn-danger">
+                <i class="fas fa-trash"></i> 清空数据
+            </button>
+        </div>
+        
+        <!-- 图片批量操作工具栏 -->
+        <div class="image-bulk-toolbar" id="imageBulkToolbar">
+            <div class="bulk-toolbar-left">
+                <button id="toggleBulkMode" class="btn-secondary bulk-toggle-btn">
+                    <i class="fas fa-check-square"></i>
+                    批量选择
+                </button>
+                <span class="bulk-selection-info" id="bulkSelectionInfo" style="display: none;">
+                    已选择 <span class="selected-count">0</span> 张图片
+                </span>
+            </div>
+            
+            <div class="bulk-toolbar-right" id="bulkActions" style="display: none;">
+                <button id="selectAllImages" class="btn-secondary bulk-action-btn">
+                    <i class="fas fa-check-double"></i>
+                    全选
+                </button>
+                <button id="clearSelection" class="btn-secondary bulk-action-btn">
+                    <i class="fas fa-times"></i>
+                    清除选择
+                </button>
+            </div>
+        </div>
+        
+        <!-- 图片显示区域 -->
+        <div class="image-gallery" id="imagesGrid">
+            <!-- 图片内容会动态生成 -->
+        </div>
+        
+        <div class="debug-info" id="debugInfo">
+            等待操作...
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // 测试相关的变量
+        let testStep = 0;
+        let debugLog = '';
+        
+        function updateStatus(message) {
+            document.getElementById('testStatus').innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+        }
+        
+        function addDebugLog(message) {
+            debugLog += `[${new Date().toLocaleTimeString()}] ${message}\n`;
+            document.getElementById('debugInfo').textContent = debugLog;
+        }
+        
+        // 等待页面加载完成
+        document.addEventListener('DOMContentLoaded', () => {
+            addDebugLog('页面加载完成，知识库系统初始化中...');
+            
+            // 等待知识库系统初始化
+            setTimeout(() => {
+                if (window.knowledgeBase) {
+                    addDebugLog('知识库系统初始化成功');
+                    setupTestEvents();
+                } else {
+                    addDebugLog('错误：知识库系统未初始化');
+                }
+            }, 500);
+        });
+        
+        function setupTestEvents() {
+            // 添加测试图片
+            document.getElementById('testAddImages').addEventListener('click', () => {
+                addTestImages();
+                addDebugLog('添加了测试图片数据');
+                updateStatus('测试图片已添加，可以开始测试批量选择功能');
+            });
+            
+            // 进入批量模式
+            document.getElementById('testBulkMode').addEventListener('click', () => {
+                if (window.knowledgeBase.data.images.length === 0) {
+                    addDebugLog('错误：请先添加测试图片');
+                    return;
+                }
+                
+                // 切换到图片页面
+                window.knowledgeBase.showSection('images');
+                
+                // 进入批量模式
+                if (!window.knowledgeBase.bulkMode) {
+                    window.knowledgeBase.toggleBulkMode();
+                    addDebugLog('进入批量模式');
+                    updateStatus('已进入批量模式，现在可以测试单独选择图片');
+                    
+                    // 启用测试按钮
+                    document.getElementById('testSelectFirst').disabled = false;
+                    document.getElementById('testSelectSecond').disabled = false;
+                }
+            });
+            
+            // 选择第一张图片
+            document.getElementById('testSelectFirst').addEventListener('click', () => {
+                if (window.knowledgeBase.data.images.length > 0) {
+                    const firstImageId = window.knowledgeBase.data.images[0].id;
+                    window.knowledgeBase.toggleImageSelection(firstImageId);
+                    addDebugLog(`尝试选择第一张图片 (ID: ${firstImageId})`);
+                    
+                    // 检查选择状态
+                    setTimeout(() => {
+                        checkSelectionStatus(firstImageId, '第一张图片');
+                    }, 100);
+                }
+            });
+            
+            // 选择第二张图片
+            document.getElementById('testSelectSecond').addEventListener('click', () => {
+                if (window.knowledgeBase.data.images.length > 1) {
+                    const secondImageId = window.knowledgeBase.data.images[1].id;
+                    window.knowledgeBase.toggleImageSelection(secondImageId);
+                    addDebugLog(`尝试选择第二张图片 (ID: ${secondImageId})`);
+                    
+                    // 检查选择状态
+                    setTimeout(() => {
+                        checkSelectionStatus(secondImageId, '第二张图片');
+                    }, 100);
+                }
+            });
+            
+            // 清空数据
+            document.getElementById('testClearAll').addEventListener('click', () => {
+                window.knowledgeBase.data.images = [];
+                window.knowledgeBase.saveData();
+                window.knowledgeBase.showImages();
+                addDebugLog('清空了所有图片数据');
+                updateStatus('数据已清空，可以重新开始测试');
+                
+                // 禁用测试按钮
+                document.getElementById('testSelectFirst').disabled = true;
+                document.getElementById('testSelectSecond').disabled = true;
+            });
+        }
+        
+        function checkSelectionStatus(imageId, imageName) {
+            const card = document.querySelector(`[data-image-id="${imageId}"]`);
+            const checkbox = card?.querySelector('.image-selection-checkbox');
+            const checkIcon = checkbox?.querySelector('i');
+            
+            let status = `${imageName}选择状态检查:\n`;
+            status += `- 卡片存在: ${!!card}\n`;
+            status += `- 复选框存在: ${!!checkbox}\n`;
+            status += `- 图标存在: ${!!checkIcon}\n`;
+            
+            if (card) {
+                status += `- 卡片类名: ${card.className}\n`;
+                status += `- 卡片有selected类: ${card.classList.contains('selected')}\n`;
+            }
+            
+            if (checkbox) {
+                status += `- 复选框类名: ${checkbox.className}\n`;
+                status += `- 复选框有checked类: ${checkbox.classList.contains('checked')}\n`;
+                status += `- 复选框背景色: ${checkbox.style.background}\n`;
+            }
+            
+            if (checkIcon) {
+                status += `- 图标显示状态: ${checkIcon.style.display}\n`;
+                status += `- 图标颜色: ${checkIcon.style.color}\n`;
+            }
+            
+            status += `- 在选择集合中: ${window.knowledgeBase.selectedImages.has(imageId)}`;
+            
+            addDebugLog(status);
+            
+            // 判断是否修复成功
+            const isSelected = window.knowledgeBase.selectedImages.has(imageId);
+            const hasCheckedClass = checkbox?.classList.contains('checked');
+            const iconVisible = checkIcon?.style.display === 'block';
+            
+            if (isSelected && hasCheckedClass && iconVisible) {
+                updateStatus(`✅ ${imageName}选择状态正确显示 - 修复成功！`);
+                addDebugLog(`✅ ${imageName}修复验证成功`);
+            } else {
+                updateStatus(`❌ ${imageName}选择状态显示异常 - 需要进一步修复`);
+                addDebugLog(`❌ ${imageName}修复验证失败`);
+            }
+        }
+        
+        function addTestImages() {
+            const testImages = [
+                {
+                    id: 'test-image-1',
+                    name: '测试图片1.jpg',
+                    category: 'images',
+                    tags: ['测试', '图片'],
+                    uploadDate: new Date().toISOString(),
+                    size: 150000,
+                    dataUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNjM2NmYxIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7mtYvor5Xlm77niYcxPC90ZXh0Pjwvc3ZnPg=='
+                },
+                {
+                    id: 'test-image-2',
+                    name: '测试图片2.jpg',
+                    category: 'images',
+                    tags: ['测试', '图片'],
+                    uploadDate: new Date().toISOString(),
+                    size: 200000,
+                    dataUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTBiOTgxIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7mtYvor5Xlm77niYcyPC90ZXh0Pjwvc3ZnPg=='
+                }
+            ];
+            
+            // 清空现有数据
+            window.knowledgeBase.data.images = [];
+            
+            // 添加测试图片
+            testImages.forEach(img => {
+                window.knowledgeBase.data.images.push(img);
+            });
+            
+            // 保存数据并刷新显示
+            window.knowledgeBase.saveData();
+            window.knowledgeBase.showImages();
+        }
+    </script>
+</body>
+</html>

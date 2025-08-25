@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全状态检查 - 知识库管理系统</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .security-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .security-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .security-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .security-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .security-card h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .security-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .status-success {
+            background-color: #10b981;
+        }
+        
+        .status-warning {
+            background-color: #f59e0b;
+        }
+        
+        .status-error {
+            background-color: #ef4444;
+        }
+        
+        .security-details {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .audit-log {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .audit-log h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .log-entry {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+        
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .log-timestamp {
+            color: var(--text-tertiary);
+            font-size: 0.8rem;
+        }
+        
+        .log-event {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .log-details {
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+        
+        .security-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn-security {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="security-container">
+        <div class="security-header">
+            <h1><i class="fas fa-shield-alt"></i> 安全状态检查</h1>
+            <p>知识库管理系统的安全配置和状态监控</p>
+        </div>
+        
+        <div class="security-grid" id="securityGrid">
+            <!-- 安全状态卡片将在这里动态生成 -->
+        </div>
+        
+        <div class="audit-log">
+            <h3><i class="fas fa-history"></i> 最近审计日志</h3>
+            <div id="auditLogContainer">
+                <!-- 审计日志将在这里显示 -->
+            </div>
+        </div>
+        
+        <div class="security-actions">
+            <button class="btn-security btn-primary" onclick="refreshSecurityStatus()">
+                <i class="fas fa-sync-alt"></i> 刷新状态
+            </button>
+            <button class="btn-security btn-secondary" onclick="exportSecurityReport()">
+                <i class="fas fa-download"></i> 导出安全报告
+            </button>
+            <button class="btn-security btn-secondary" onclick="clearAuditLog()">
+                <i class="fas fa-trash"></i> 清空审计日志
+            </button>
+            <button class="btn-security btn-danger" onclick="resetSecuritySettings()">
+                <i class="fas fa-exclamation-triangle"></i> 重置安全设置
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let knowledgeBase = null;
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadMainScript();
+            refreshSecurityStatus();
+        });
+        
+        // 加载主脚本
+        async function loadMainScript() {
+            try {
+                const script = document.createElement('script');
+                script.src = 'script.js';
+                document.head.appendChild(script);
+                
+                return new Promise((resolve) => {
+                    script.onload = () => {
+                        // 等待KnowledgeBase类加载完成
+                        setTimeout(() => {
+                            if (typeof KnowledgeBase !== 'undefined') {
+                                knowledgeBase = new KnowledgeBase();
+                                resolve();
+                            }
+                        }, 100);
+                    };
+                });
+            } catch (error) {
+                console.error('加载主脚本失败:', error);
+            }
+        }
+        
+        // 刷新安全状态
+        function refreshSecurityStatus() {
+            if (!knowledgeBase) {
+                showMessage('错误', '知识库系统未加载', 'error');
+                return;
+            }
+            
+            const securityReport = knowledgeBase.getSecurityReport();
+            displaySecurityStatus(securityReport);
+            displayAuditLog();
+        }
+        
+        // 显示安全状态
+        function displaySecurityStatus(report) {
+            const grid = document.getElementById('securityGrid');
+            
+            const securityFeatures = [
+                {
+                    title: 'XSS防护',
+                    icon: 'fas fa-shield-virus',
+                    status: report.securityFeatures.xssProtection ? 'success' : 'error',
+                    description: '防止跨站脚本攻击，过滤恶意代码'
+                },
+                {
+                    title: '输入验证',
+                    icon: 'fas fa-check-circle',
+                    status: report.securityFeatures.inputValidation ? 'success' : 'error',
+                    description: '验证用户输入，防止注入攻击'
+                },
+                {
+                    title: '文件上传安全',
+                    icon: 'fas fa-file-upload',
+                    status: report.securityFeatures.fileUploadValidation ? 'success' : 'error',
+                    description: '验证文件类型和大小，防止恶意文件上传'
+                },
+                {
+                    title: '数据清理',
+                    icon: 'fas fa-broom',
+                    status: report.securityFeatures.dataSanitization ? 'success' : 'error',
+                    description: '清理和验证数据，确保数据安全'
+                },
+                {
+                    title: '审计日志',
+                    icon: 'fas fa-clipboard-list',
+                    status: report.securityFeatures.auditLogging ? 'success' : 'warning',
+                    description: '记录系统操作，便于安全审计'
+                },
+                {
+                    title: '数据完整性',
+                    icon: 'fas fa-database',
+                    status: 'success',
+                    description: `总项目数: ${report.dataIntegrity.totalItems}, 最后备份: ${report.dataIntegrity.lastBackup}`
+                }
+            ];
+            
+            grid.innerHTML = securityFeatures.map(feature => `
+                <div class="security-card">
+                    <h3>
+                        <i class="${feature.icon}"></i>
+                        ${feature.title}
+                    </h3>
+                    <div class="security-status">
+                        <span class="status-indicator status-${feature.status}"></span>
+                        <span>${getStatusText(feature.status)}</span>
+                    </div>
+                    <div class="security-details">
+                        ${feature.description}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // 获取状态文本
+        function getStatusText(status) {
+            switch (status) {
+                case 'success': return '正常';
+                case 'warning': return '警告';
+                case 'error': return '错误';
+                default: return '未知';
+            }
+        }
+        
+        // 显示审计日志
+        function displayAuditLog() {
+            if (!knowledgeBase) return;
+            
+            const container = document.getElementById('auditLogContainer');
+            const recentEvents = knowledgeBase.security.auditLog.slice(-10).reverse();
+            
+            if (recentEvents.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-tertiary);">暂无审计日志</p>';
+                return;
+            }
+            
+            container.innerHTML = recentEvents.map(log => `
+                <div class="log-entry">
+                    <div class="log-timestamp">${formatTimestamp(log.timestamp)}</div>
+                    <div class="log-event">${log.event}</div>
+                    <div class="log-details">${formatLogDetails(log.details)}</div>
+                </div>
+            `).join('');
+        }
+        
+        // 格式化时间戳
+        function formatTimestamp(timestamp) {
+            return new Date(timestamp).toLocaleString('zh-CN');
+        }
+        
+        // 格式化日志详情
+        function formatLogDetails(details) {
+            if (!details || Object.keys(details).length === 0) {
+                return '无详细信息';
+            }
+            
+            return Object.entries(details)
+                .map(([key, value]) => `${key}: ${value}`)
+                .join(', ');
+        }
+        
+        // 导出安全报告
+        function exportSecurityReport() {
+            if (!knowledgeBase) {
+                showMessage('错误', '知识库系统未加载', 'error');
+                return;
+            }
+            
+            const report = knowledgeBase.getSecurityReport();
+            const reportStr = JSON.stringify(report, null, 2);
+            const blob = new Blob([reportStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `安全报告_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showMessage('成功', '安全报告已导出', 'success');
+        }
+        
+        // 清空审计日志
+        function clearAuditLog() {
+            if (!knowledgeBase) {
+                showMessage('错误', '知识库系统未加载', 'error');
+                return;
+            }
+            
+            if (confirm('确定要清空所有审计日志吗？此操作不可恢复。')) {
+                knowledgeBase.security.auditLog = [];
+                knowledgeBase.saveAuditLog();
+                displayAuditLog();
+                showMessage('成功', '审计日志已清空', 'success');
+            }
+        }
+        
+        // 重置安全设置
+        function resetSecuritySettings() {
+            if (!knowledgeBase) {
+                showMessage('错误', '知识库系统未加载', 'error');
+                return;
+            }
+            
+            if (confirm('确定要重置所有安全设置吗？此操作不可恢复。')) {
+                // 重置安全配置到默认值
+                knowledgeBase.security.config = {
+                    sessionTimeout: 30,
+                    maxLoginAttempts: 5,
+                    minPasswordLength: 8,
+                    enableEncryption: false,
+                    enableAuditLog: true
+                };
+                
+                showMessage('成功', '安全设置已重置', 'success');
+                refreshSecurityStatus();
+            }
+        }
+        
+        // 显示消息
+        function showMessage(title, message, type) {
+            // 简单的消息显示
+            const alertDiv = document.createElement('div');
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                max-width: 300px;
+            `;
+            
+            switch (type) {
+                case 'success':
+                    alertDiv.style.background = '#10b981';
+                    break;
+                case 'error':
+                    alertDiv.style.background = '#ef4444';
+                    break;
+                case 'warning':
+                    alertDiv.style.background = '#f59e0b';
+                    break;
+                default:
+                    alertDiv.style.background = '#6b7280';
+            }
+            
+            alertDiv.textContent = `${title}: ${message}`;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

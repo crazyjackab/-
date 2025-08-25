@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>链接统计测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stats-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        button.success {
+            background: #28a745;
+        }
+        
+        button.danger {
+            background: #dc3545;
+        }
+        
+        .log-container {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .log-header {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .log-content {
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 4px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .timestamp {
+            color: #6c757d;
+            margin-right: 10px;
+        }
+        
+        .hidden-elements {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>链接收藏统计测试页面</h1>
+        <p>这个页面用来测试统计信息显示功能</p>
+        
+        <div class="stats-display">
+            <div class="stat-card">
+                <div class="stat-number" id="totalLinksCount">0</div>
+                <div class="stat-label">个链接</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalFoldersCount">0</div>
+                <div class="stat-label">个文件夹</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalTagsCount">0</div>
+                <div class="stat-label">个标签</div>
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="updateStats()">手动更新统计</button>
+            <button onclick="addTestData()" class="success">添加测试数据</button>
+            <button onclick="clearData()" class="danger">清空数据</button>
+            <button onclick="loadMainScript()">加载主脚本</button>
+            <button onclick="inspectElements()">检查元素</button>
+            <button onclick="testDirectUpdate()">直接更新</button>
+        </div>
+        
+        <div class="log-container">
+            <div class="log-header">
+                <i>📋</i> 操作日志
+            </div>
+            <div class="log-content" id="logContent">
+                <!-- 日志内容将在这里显示 -->
+            </div>
+        </div>
+        
+        <!-- 隐藏的元素，用于测试主脚本的查找功能 -->
+        <div class="hidden-elements">
+            <h3>隐藏测试元素（与主页面相同的ID）</h3>
+            <p>链接数量：<span id="totalLinksCount">主页面应该找到这个</span></p>
+            <p>文件夹数量：<span id="totalFoldersCount">主页面应该找到这个</span></p>
+            <p>标签数量：<span id="totalTagsCount">主页面应该找到这个</span></p>
+        </div>
+    </div>
+
+    <script>
+        let logIndex = 0;
+        
+        // 记录日志
+        function log(message, type = 'info') {
+            const logContent = document.getElementById('logContent');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <span class="timestamp">[${timestamp}]</span>
+                <span class="message">${message}</span>
+            `;
+            logContent.appendChild(logEntry);
+            logContent.scrollTop = logContent.scrollHeight;
+            console.log(`[${timestamp}] ${message}`);
+        }
+        
+        // 更新统计信息
+        function updateStats() {
+            log('开始更新统计信息...');
+            
+            if (window.knowledgeBase) {
+                log('找到主脚本的 knowledgeBase 实例');
+                window.knowledgeBase.updateLinksPageStats();
+                log('调用 updateLinksPageStats() 完成');
+            } else {
+                log('未找到主脚本的 knowledgeBase 实例', 'error');
+                testDirectUpdate();
+            }
+        }
+        
+        // 直接更新
+        function testDirectUpdate() {
+            log('执行直接更新测试...');
+            
+            const linksEl = document.getElementById('totalLinksCount');
+            const foldersEl = document.getElementById('totalFoldersCount');
+            const tagsEl = document.getElementById('totalTagsCount');
+            
+            log(`找到元素: 链接=${!!linksEl}, 文件夹=${!!foldersEl}, 标签=${!!tagsEl}`);
+            
+            if (linksEl) {
+                linksEl.textContent = '999';
+                linksEl.style.background = 'yellow';
+                log('链接数量已设置为 999');
+            }
+            
+            if (foldersEl) {
+                foldersEl.textContent = '888';
+                foldersEl.style.background = 'yellow';
+                log('文件夹数量已设置为 888');
+            }
+            
+            if (tagsEl) {
+                tagsEl.textContent = '777';
+                tagsEl.style.background = 'yellow';
+                log('标签数量已设置为 777');
+            }
+            
+            // 3秒后恢复
+            setTimeout(() => {
+                if (linksEl) linksEl.style.background = '';
+                if (foldersEl) foldersEl.style.background = '';
+                if (tagsEl) tagsEl.style.background = '';
+                log('已恢复元素背景色');
+            }, 3000);
+        }
+        
+        // 添加测试数据
+        function addTestData() {
+            log('添加测试数据到 localStorage...');
+            
+            const testData = {
+                links: [
+                    { id: '1', title: 'GitHub', url: 'https://github.com', tags: ['开发', '代码'] },
+                    { id: '2', title: 'MDN', url: 'https://developer.mozilla.org', tags: ['文档', '学习'] },
+                    { id: '3', title: '菜鸟教程', url: 'https://www.runoob.com', tags: ['教程', '学习'] },
+                    { id: '4', title: 'Stack Overflow', url: 'https://stackoverflow.com', tags: ['问答', '技术'] },
+                    { id: '5', title: 'W3Schools', url: 'https://www.w3schools.com', tags: ['教程', 'Web'] }
+                ],
+                linkFolders: [
+                    { id: 'default', name: '默认文件夹' },
+                    { id: 'dev', name: '开发工具' },
+                    { id: 'study', name: '学习资源' }
+                ]
+            };
+            
+            localStorage.setItem('knowledgeBaseData', JSON.stringify(testData));
+            log(`已保存测试数据: ${testData.links.length} 个链接, ${testData.linkFolders.length} 个文件夹`);
+            
+            // 自动更新显示
+            updateStats();
+        }
+        
+        // 清空数据
+        function clearData() {
+            log('清空 localStorage 数据...');
+            localStorage.removeItem('knowledgeBaseData');
+            
+            // 重置显示
+            document.getElementById('totalLinksCount').textContent = '0';
+            document.getElementById('totalFoldersCount').textContent = '0';
+            document.getElementById('totalTagsCount').textContent = '0';
+            
+            log('数据已清空');
+        }
+        
+        // 加载主脚本
+        function loadMainScript() {
+            log('加载主页面脚本...');
+            
+            const script = document.createElement('script');
+            script.src = 'script.js';
+            script.onload = () => {
+                log('主脚本加载成功');
+                setTimeout(() => {
+                    if (window.knowledgeBase) {
+                        log('KnowledgeBase 实例已创建');
+                        updateStats();
+                    } else {
+                        log('KnowledgeBase 实例未找到', 'error');
+                    }
+                }, 1000);
+            };
+            script.onerror = () => {
+                log('主脚本加载失败', 'error');
+            };
+            document.head.appendChild(script);
+        }
+        
+        // 检查元素
+        function inspectElements() {
+            log('检查页面元素...');
+            
+            const elements = {
+                'totalLinksCount': document.getElementById('totalLinksCount'),
+                'totalFoldersCount': document.getElementById('totalFoldersCount'),
+                'totalTagsCount': document.getElementById('totalTagsCount')
+            };
+            
+            Object.entries(elements).forEach(([id, element]) => {
+                if (element) {
+                    const styles = getComputedStyle(element);
+                    log(`元素 ${id}: 存在, 内容="${element.textContent}", 显示=${styles.display}, 可见=${styles.visibility}`);
+                } else {
+                    log(`元素 ${id}: 不存在`, 'error');
+                }
+            });
+            
+            // 检查localStorage
+            const savedData = localStorage.getItem('knowledgeBaseData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                log(`localStorage 数据: ${data.links?.length || 0} 个链接, ${data.linkFolders?.length || 0} 个文件夹`);
+            } else {
+                log('localStorage 中无数据');
+            }
+        }
+        
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', () => {
+            log('测试页面加载完成');
+            inspectElements();
+        });
+    </script>
+</body>
+</html>

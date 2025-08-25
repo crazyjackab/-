@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑功能测试</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div style="padding: 20px;">
+        <h1>编辑功能测试页面</h1>
+        <p>这个页面用于测试编辑功能的修复。</p>
+        
+        <button id="addTestData" class="btn-primary" style="margin: 20px 0;">
+            <i class="fas fa-plus"></i> 添加测试数据
+        </button>
+        
+        <button id="showDocuments" class="btn-secondary" style="margin: 20px 0;">
+            <i class="fas fa-file"></i> 显示文档列表
+        </button>
+        
+        <div id="testContent" style="margin-top: 20px;">
+            <!-- 测试内容会显示在这里 -->
+        </div>
+    </div>
+
+    <!-- 包含原来的模态框HTML -->
+    <div class="modal" id="editContentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="editModalTitle">编辑内容</h2>
+                <button class="modal-close" id="closeEditModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- 编辑笔记表单 -->
+                <div class="edit-form" id="editNoteForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="editNoteTitle">标题</label>
+                        <input type="text" id="editNoteTitle" placeholder="笔记标题" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editNoteContent">内容</label>
+                        <div class="rich-text-editor">
+                            <div class="editor-toolbar">
+                                <button type="button" class="toolbar-btn" data-command="bold" title="加粗">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-command="italic" title="斜体">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                            </div>
+                            <div class="editor-content" id="editNoteContent" contenteditable="true" placeholder="在这里编辑您的想法..."></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editNoteTags">标签</label>
+                        <input type="text" id="editNoteTags" placeholder="用逗号分隔标签">
+                    </div>
+                </div>
+                
+                <!-- 编辑文档表单 -->
+                <div class="edit-form" id="editDocumentForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="editDocumentName">文档名称</label>
+                        <input type="text" id="editDocumentName" placeholder="文档名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDocumentTags">标签</label>
+                        <input type="text" id="editDocumentTags" placeholder="用逗号分隔标签">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelEdit">取消</button>
+                <button class="btn-primary" id="confirmEdit">
+                    <span class="btn-text">保存</span>
+                    <span class="btn-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span class="loading-text">保存中...</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知容器 -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="script.js"></script>
+    <script>
+        // 等待页面加载完成
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('测试页面加载完成');
+            
+            // 添加测试数据按钮事件
+            document.getElementById('addTestData').addEventListener('click', () => {
+                addTestData();
+            });
+            
+            // 显示文档按钮事件
+            document.getElementById('showDocuments').addEventListener('click', () => {
+                showTestDocuments();
+            });
+        });
+        
+        // 添加测试数据
+        function addTestData() {
+            if (!window.knowledgeBase) {
+                console.error('知识库系统未初始化');
+                return;
+            }
+            
+            // 添加测试文档
+            const testDoc = {
+                id: 'test-doc-' + Date.now(),
+                name: '测试文档.pdf',
+                type: 'application/pdf',
+                size: 1024 * 1024,
+                tags: ['测试', '文档'],
+                uploadDate: new Date().toISOString(),
+                category: 'documents'
+            };
+            
+            window.knowledgeBase.data.documents.push(testDoc);
+            
+            // 添加测试笔记
+            const testNote = {
+                id: 'test-note-' + Date.now(),
+                title: '测试笔记',
+                content: '<p>这是一个测试笔记的内容。</p>',
+                tags: ['测试', '笔记'],
+                uploadDate: new Date().toISOString(),
+                category: 'notes'
+            };
+            
+            window.knowledgeBase.data.notes.push(testNote);
+            
+            // 保存数据
+            window.knowledgeBase.saveData();
+            window.knowledgeBase.updateStats();
+            
+            console.log('测试数据已添加');
+            window.knowledgeBase.showToast('成功', '测试数据已添加', 'success');
+        }
+        
+        // 显示测试文档
+        function showTestDocuments() {
+            if (!window.knowledgeBase) {
+                console.error('知识库系统未初始化');
+                return;
+            }
+            
+            const container = document.getElementById('testContent');
+            container.innerHTML = '';
+            
+            if (window.knowledgeBase.data.documents.length === 0) {
+                container.innerHTML = '<p>暂无文档数据，请先添加测试数据。</p>';
+                return;
+            }
+            
+            window.knowledgeBase.data.documents.forEach(doc => {
+                const card = window.knowledgeBase.createContentCard(doc);
+                container.appendChild(card);
+            });
+            
+            // 同样显示笔记
+            window.knowledgeBase.data.notes.forEach(note => {
+                const card = window.knowledgeBase.createNoteCard(note);
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

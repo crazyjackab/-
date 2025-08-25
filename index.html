@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的知识库</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 侧边导航栏 -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-brain"></i> 知识库</h2>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <ul class="nav-menu">
+            <li><a href="#dashboard" class="nav-link active" data-section="dashboard">
+                <i class="fas fa-home"></i> 仪表盘
+            </a></li>
+            <li><a href="#documents" class="nav-link" data-section="documents">
+                <i class="fas fa-file-text"></i> 文档资料
+            </a></li>
+            <li><a href="#images" class="nav-link" data-section="images">
+                <i class="fas fa-image"></i> 图片收藏
+            </a></li>
+            <li><a href="#videos" class="nav-link" data-section="videos">
+                <i class="fas fa-video"></i> 视频资源
+            </a></li>
+            <li><a href="#links" class="nav-link" data-section="links">
+                <i class="fas fa-link"></i> 链接收藏
+            </a></li>
+            <li><a href="#notes" class="nav-link" data-section="notes">
+                <i class="fas fa-sticky-note"></i> 笔记想法
+            </a></li>
+            <li><a href="#search" class="nav-link" data-section="search">
+                <i class="fas fa-search"></i> 搜索查找
+            </a></li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <button class="btn-secondary" id="exportData">
+                <i class="fas fa-download"></i> 导出数据
+            </button>
+            <button class="btn-secondary" id="importData">
+                <i class="fas fa-upload"></i> 导入数据
+            </button>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <!-- 顶部工具栏 -->
+        <header class="top-bar">
+            <button class="sidebar-toggle mobile-only" id="mobileSidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="搜索知识库..." id="globalSearch">
+                <button class="search-btn" id="searchBtn" title="搜索">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="header-actions">
+                <button class="btn-primary" id="addContent">
+                    <i class="fas fa-plus"></i> 添加内容
+                </button>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- 仪表盘 -->
+        <section class="content-section active" id="dashboard-section">
+            <div class="section-header">
+                <h1>知识库仪表盘</h1>
+                <p>欢迎回到您的个人知识管理中心</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card clickable-stat" data-section="documents">
+                    <div class="stat-icon">
+                        <i class="fas fa-file-text"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="documentsCount">0</h3>
+                        <p>文档资料</p>
+                        <div class="recent-stats">
+                            <span class="recent-label">近7天新增：</span>
+                            <span class="recent-count" id="documentsRecentCount">0</span>
+                            <span class="recent-unit">篇</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card clickable-stat" data-section="images">
+                    <div class="stat-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="imagesCount">0</h3>
+                        <p>图片收藏</p>
+                        <div class="recent-stats">
+                            <span class="recent-label">近7天新增：</span>
+                            <span class="recent-count" id="imagesRecentCount">0</span>
+                            <span class="recent-unit">张</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card clickable-stat" data-section="videos">
+                    <div class="stat-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="videosCount">0</h3>
+                        <p>视频资源</p>
+                        <div class="recent-stats">
+                            <span class="recent-label">近7天新增：</span>
+                            <span class="recent-count" id="videosRecentCount">0</span>
+                            <span class="recent-unit">个</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card clickable-stat" data-section="links">
+                    <div class="stat-icon">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="linksCount">0</h3>
+                        <p>链接收藏</p>
+                        <div class="recent-stats">
+                            <span class="recent-label">近7天新增：</span>
+                            <span class="recent-count" id="linksRecentCount">0</span>
+                            <span class="recent-unit">条</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recent-section">
+                <h2>最近添加</h2>
+                <div class="recent-items" id="recentItems">
+                    <!-- 最近添加的内容会动态生成 -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 文档资料区域 -->
+        <section class="content-section" id="documents-section">
+            <div class="section-header">
+                <h1>文档资料</h1>
+                <p>管理您的PDF、Word、文本等文档文件</p>
+            </div>
+            
+            <!-- 文档分类筛选器 -->
+            <div class="document-filters">
+                <div class="filter-group">
+                    <label for="docTypeFilter">
+                        <i class="fas fa-file-alt"></i>
+                        文件类型：
+                    </label>
+                    <select id="docTypeFilter" class="filter-select">
+                        <option value="all">所有类型</option>
+                        <option value="pdf">PDF 文档</option>
+                        <option value="word">Word 文档</option>
+                        <option value="excel">Excel 表格</option>
+                        <option value="powerpoint">PPT 演示</option>
+                        <option value="text">文本文件</option>
+                        <option value="other">其他文件</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="docTagFilter">
+                        <i class="fas fa-tags"></i>
+                        标签分类：
+                    </label>
+                    <select id="docTagFilter" class="filter-select">
+                        <option value="all">所有标签</option>
+                        <!-- 标签选项会动态生成 -->
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="docSortFilter">
+                        <i class="fas fa-sort"></i>
+                        排序方式：
+                    </label>
+                    <select id="docSortFilter" class="filter-select">
+                        <option value="newest">最新优先</option>
+                        <option value="oldest">最旧优先</option>
+                        <option value="name">按名称</option>
+                        <option value="size">按大小</option>
+                        <option value="type">按类型</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label style="opacity: 0; pointer-events: none;">占位</label>
+                    <button id="clearDocFilters" class="btn-secondary filter-clear-btn">
+                        <i class="fas fa-times"></i> 清除筛选
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 分类统计信息 -->
+            <div class="document-stats" id="documentStats">
+                <!-- 统计信息会动态生成 -->
+            </div>
+            
+            <div class="content-grid" id="documentsGrid">
+                <!-- 文档内容会动态生成 -->
+            </div>
+        </section>
+
+        <!-- 图片收藏区域 -->
+        <section class="content-section" id="images-section">
+            <div class="section-header">
+                <h1>图片收藏</h1>
+                <p>保存和管理您收集的图片资源</p>
+            </div>
+            
+            <!-- 图片分类和标签筛选器 -->
+            <div class="image-filters">
+                <div class="filter-group">
+                    <label for="imageCategoryFilter">
+                        <i class="fas fa-folder"></i>
+                        分类：
+                    </label>
+                    <select id="imageCategoryFilter" class="filter-select">
+                        <option value="all">所有分类</option>
+                        <!-- 分类选项会动态生成 -->
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="imageTagFilter">
+                        <i class="fas fa-tags"></i>
+                        标签：
+                    </label>
+                    <select id="imageTagFilter" class="filter-select">
+                        <option value="all">所有标签</option>
+                        <!-- 标签选项会动态生成 -->
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="imageSortFilter">
+                        <i class="fas fa-sort"></i>
+                        排序：
+                    </label>
+                    <select id="imageSortFilter" class="filter-select">
+                        <option value="newest">最新优先</option>
+                        <option value="oldest">最旧优先</option>
+                        <option value="name">按名称</option>
+                        <option value="size">按大小</option>
+                        <option value="category">按分类</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label style="opacity: 0; pointer-events: none;">占位</label>
+                    <button id="clearImageFilters" class="btn-secondary filter-clear-btn">
+                        <i class="fas fa-times"></i> 清除筛选
+                    </button>
+                </div>
+                
+                <div class="filter-group">
+                    <label style="opacity: 0; pointer-events: none;">占位</label>
+                    <button id="manageCategories" class="btn-primary">
+                        <i class="fas fa-cog"></i> 管理分类
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 分类统计信息 -->
+            <div class="image-stats" id="imageStats">
+                <!-- 统计信息会动态生成 -->
+            </div>
+            
+            <!-- 图片批量操作工具栏 -->
+            <div class="image-bulk-toolbar" id="imageBulkToolbar">
+                <div class="bulk-toolbar-left">
+                    <button id="toggleBulkMode" class="btn-secondary bulk-toggle-btn">
+                        <i class="fas fa-check-square"></i>
+                        批量选择
+                    </button>
+                    <span class="bulk-selection-info" id="bulkSelectionInfo" style="display: none;">
+                        已选择 <span class="selected-count">0</span> 张图片
+                    </span>
+                </div>
+                
+                <div class="bulk-toolbar-right" id="bulkActions" style="display: none;">
+                    <button id="selectAllImages" class="btn-secondary bulk-action-btn">
+                        <i class="fas fa-check-double"></i>
+                        全选
+                    </button>
+                    <button id="clearSelection" class="btn-secondary bulk-action-btn">
+                        <i class="fas fa-times"></i>
+                        清除选择
+                    </button>
+                    <div class="bulk-action-divider"></div>
+                    <button id="bulkDownload" class="btn-primary bulk-action-btn" disabled>
+                        <i class="fas fa-download"></i>
+                        下载
+                    </button>
+                    <button id="bulkMove" class="btn-secondary bulk-action-btn" disabled>
+                        <i class="fas fa-folder"></i>
+                        移动分类
+                    </button>
+                    <button id="bulkDelete" class="btn-danger bulk-action-btn" disabled>
+                        <i class="fas fa-trash"></i>
+                        删除
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 图片显示区域 -->
+            <div class="image-gallery" id="imagesGrid">
+                <!-- 图片内容会动态生成 -->
+            </div>
+        </section>
+
+        <!-- 视频资源区域 -->
+        <section class="content-section" id="videos-section">
+            <div class="section-header">
+                <h1>视频资源</h1>
+                <p>收藏和管理视频文件及在线视频链接</p>
+            </div>
+            <div class="content-grid" id="videosGrid">
+                <!-- 视频内容会动态生成 -->
+            </div>
+        </section>
+
+        <!-- 链接收藏区域 -->
+        <section class="content-section" id="links-section">
+            <div class="section-header">
+                <h1>链接收藏</h1>
+                <p>管理您收集的网页链接和在线资源</p>
+            </div>
+            
+            <!-- 优化后的快速操作栏 -->
+            <div class="links-quick-actions">
+                <div class="search-and-filter">
+                    <div class="enhanced-search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="linksSearchInput" placeholder="搜索链接标题、描述或标签...">
+                    </div>
+                    <div class="filter-dropdown">
+                        <select id="linkTagFilter" class="enhanced-filter-select">
+                            <option value="all">所有标签</option>
+                        </select>
+                    </div>
+                    <div class="filter-dropdown">
+                        <select id="linkSortFilter" class="enhanced-filter-select">
+                            <option value="newest">最新添加</option>
+                            <option value="oldest">最早添加</option>
+                            <option value="title">按标题</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-secondary enhanced-btn" id="toggleLinkBulkMode">
+                        <i class="fas fa-check-square"></i>
+                        批量选择
+                    </button>
+                    <button class="btn-primary enhanced-btn" id="addContentFromLinks">
+                        <i class="fas fa-plus"></i>
+                        添加链接
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 链接统计信息 -->
+            <div class="link-stats" id="linkStats">
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <i class="fas fa-bookmark"></i>
+                        <span>链接总数：<strong id="totalLinksCount">0</strong></span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-folder"></i>
+                        <span>文件夹：<strong id="totalFoldersCount">0</strong></span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-tags"></i>
+                        <span>标签数量：<strong id="totalTagsCount">0</strong></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 优化后的文件夹导航 -->
+            <div class="enhanced-folder-nav">
+                <div class="folder-nav-header">
+                    <h3><i class="fas fa-folder-open"></i> 文件夹</h3>
+                    <button class="btn-secondary small-btn" id="createFolderBtn">
+                        <i class="fas fa-plus"></i>
+                        新建文件夹
+                    </button>
+                </div>
+                <div class="folder-tabs-container">
+                    <div class="folder-tabs" id="folderTabsContainer">
+                        <!-- 文件夹标签会动态生成 -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 优化后的批量操作栏 -->
+            <div class="enhanced-bulk-operations" id="linkBulkOperationsBar" style="display: none;">
+                <div class="bulk-info">
+                    <i class="fas fa-check-circle"></i>
+                    <span>已选择 <strong id="linkSelectedCount">0</strong> 个链接</span>
+                </div>
+                <div class="bulk-actions">
+                    <button class="bulk-btn" id="selectAllLinks">
+                        <i class="fas fa-check-double"></i>
+                        全选
+                    </button>
+                    <button class="bulk-btn" id="clearLinkSelection">
+                        <i class="fas fa-times"></i>
+                        清除
+                    </button>
+                    <button class="bulk-btn" id="bulkMoveLinkCategory">
+                        <i class="fas fa-folder"></i>
+                        移动到
+                    </button>
+                    <button class="bulk-btn" id="bulkExportLinks">
+                        <i class="fas fa-download"></i>
+                        导出
+                    </button>
+                    <button class="bulk-btn danger" id="bulkDeleteLinks">
+                        <i class="fas fa-trash"></i>
+                        删除
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 优化后的链接网格 -->
+            <div class="enhanced-links-grid" id="linksGrid">
+                <!-- 链接内容会动态生成 -->
+            </div>
+        </section>
+
+        <!-- 笔记想法区域 -->
+        <section class="content-section" id="notes-section">
+            <div class="section-header">
+                <h1>笔记想法</h1>
+                <p>记录您的想法、笔记和学习心得</p>
+            </div>
+            <div class="content-grid" id="notesGrid">
+                <!-- 笔记内容会动态生成 -->
+            </div>
+        </section>
+
+        <!-- 搜索区域 -->
+        <section class="content-section" id="search-section">
+            <div class="section-header">
+                <h1>搜索查找</h1>
+                <p>在您的知识库中快速查找内容</p>
+            </div>
+            <div class="search-filters">
+                <select id="searchType">
+                    <option value="all">所有类型</option>
+                    <option value="documents">文档</option>
+                    <option value="images">图片</option>
+                    <option value="videos">视频</option>
+                    <option value="links">链接</option>
+                    <option value="notes">笔记</option>
+                </select>
+                <select id="searchSort">
+                    <option value="newest">最新优先</option>
+                    <option value="oldest">最旧优先</option>
+                    <option value="name">按名称</option>
+                </select>
+            </div>
+            <div class="search-results" id="searchResults">
+                <!-- 搜索结果会动态生成 -->
+            </div>
+        </section>
+    </main>
+
+
+    <!-- 添加内容模态框 -->
+    <div class="modal" id="addContentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>添加新内容</h2>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="content-type-tabs">
+                    <button class="tab-btn active" data-type="file">上传文件</button>
+                    <button class="tab-btn" data-type="link">添加链接</button>
+                    <button class="tab-btn" data-type="note">创建笔记</button>
+                </div>
+                
+                <!-- 文件上传选项卡 -->
+                <div class="tab-content active" id="fileTab">
+                    <!-- 格式和大小限制提示 -->
+                    <div class="modal-upload-info">
+                        <div class="modal-supported-formats">
+                            <h4><i class="fas fa-info-circle"></i> 支持的文件格式</h4>
+                            <div class="modal-format-tags">
+                                <span class="format-tag pdf"><i class="fas fa-file-pdf"></i> PDF</span>
+                                <span class="format-tag word"><i class="fas fa-file-word"></i> Word</span>
+                                <span class="format-tag excel"><i class="fas fa-file-excel"></i> Excel</span>
+                                <span class="format-tag ppt"><i class="fas fa-file-powerpoint"></i> PPT</span>
+                                <span class="format-tag text"><i class="fas fa-file-alt"></i> 文本</span>
+                                <span class="format-tag image"><i class="fas fa-image"></i> 图片</span>
+                                <span class="format-tag video"><i class="fas fa-video"></i> 视频</span>
+                            </div>
+                        </div>
+                        <div class="modal-size-limit">
+                            <i class="fas fa-weight-hanging"></i>
+                            <span>单个文件最大 <strong>50MB</strong></span>
+                        </div>
+                    </div>
+                    
+                    <!-- 拖拽上传区域 -->
+                    <div class="modal-drop-area" id="modalDropArea">
+                        <div class="modal-drop-content">
+                            <div class="drop-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <h4>拖放文件到这里上传</h4>
+                            <p class="drop-hint">支持多个文件同时拖拽上传</p>
+                            <div class="upload-options">
+                                <button class="btn-primary" id="modalSelectFiles" type="button">
+                                    <i class="fas fa-folder-open"></i>
+                                    或点击选择文件
+                                </button>
+                                <input type="file" id="modalFileInput" multiple accept="*/*" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="modal-drag-overlay" id="modalDragOverlay">
+                            <i class="fas fa-upload"></i>
+                            <span>松开鼠标完成选择</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 文件预览区域 -->
+                    <div class="modal-file-preview" id="modalFilePreview">
+                        <div class="modal-preview-header">
+                            <h4><i class="fas fa-list"></i> 待上传文件列表</h4>
+                            <span class="file-count" id="modalFileCount">0 个文件</span>
+                        </div>
+                        <div class="modal-file-list" id="modalFileList">
+                            <!-- 文件预览项会动态生成 -->
+                        </div>
+                        <div class="modal-upload-actions">
+                            <button class="btn-secondary" id="modalClearFiles" type="button">
+                                <i class="fas fa-trash-alt"></i>
+                                清空列表
+                            </button>
+                        </div>
+                        
+                        <!-- 上传进度条 -->
+                        <div class="upload-progress-container" id="uploadProgressContainer" style="display: none;">
+                            <div class="upload-progress-header">
+                                <span class="progress-text">正在上传...</span>
+                                <span class="progress-percentage" id="progressPercentage">0%</span>
+                            </div>
+                            <div class="upload-progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 链接添加选项卡 -->
+                <div class="tab-content" id="linkTab">
+                    <form id="linkForm">
+                        <div class="form-group">
+                            <label for="linkUrl">链接地址</label>
+                            <input type="url" id="linkUrl" placeholder="https://example.com" required>
+                            <button type="button" class="analyze-link-btn" id="analyzeLinkBtn" style="display: none;">
+                                <i class="fas fa-magic"></i> 分析网页
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <label for="linkTitle">标题</label>
+                            <input type="text" id="linkTitle" placeholder="链接标题">
+                        </div>
+                        <div class="form-group">
+                            <label for="linkDescription">描述</label>
+                            <textarea id="linkDescription" placeholder="链接描述（可选）"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="linkTags">标签</label>
+                            <div class="link-tag-input-container">
+                                <input type="text" id="linkTags" placeholder="用逗号分隔标签">
+                                <!-- 智能标签推荐区域 -->
+                                <div class="smart-tag-suggestions" id="smartTagSuggestions" style="display: none;">
+                                    <div class="suggestion-header">
+                                        <i class="fas fa-lightbulb"></i>
+                                        <span>智能推荐标签</span>
+                                        <button type="button" class="refresh-suggestions" id="refreshSuggestions" title="重新分析">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                    </div>
+                                    <div class="suggested-tags" id="suggestedTags">
+                                        <!-- 推荐标签会动态生成 -->
+                                    </div>
+                                </div>
+                                <!-- 历史标签推荐 -->
+                                <div class="history-tag-suggestions" id="historyTagSuggestions" style="display: none;">
+                                    <div class="suggestion-header">
+                                        <i class="fas fa-history"></i>
+                                        <span>历史标签</span>
+                                    </div>
+                                    <div class="history-tags" id="historyTags">
+                                        <!-- 历史标签会动态生成 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- 笔记创建选项卡 -->
+                <div class="tab-content" id="noteTab">
+                    <form id="noteForm">
+                        <div class="form-group">
+                            <label for="noteTitle">标题</label>
+                            <input type="text" id="noteTitle" placeholder="笔记标题" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="noteContent">内容</label>
+                            <div class="rich-text-editor">
+                                <div class="editor-toolbar">
+                                    <button type="button" class="toolbar-btn" data-command="bold" title="加粗">
+                                        <i class="fas fa-bold"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" data-command="italic" title="斜体">
+                                        <i class="fas fa-italic"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" data-command="underline" title="下划线">
+                                        <i class="fas fa-underline"></i>
+                                    </button>
+                                    <div class="toolbar-divider"></div>
+                                    <button type="button" class="toolbar-btn" data-command="insertUnorderedList" title="无序列表">
+                                        <i class="fas fa-list-ul"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" data-command="insertOrderedList" title="有序列表">
+                                        <i class="fas fa-list-ol"></i>
+                                    </button>
+                                    <div class="toolbar-divider"></div>
+                                    <button type="button" class="toolbar-btn" data-command="justifyLeft" title="左对齐">
+                                        <i class="fas fa-align-left"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" data-command="justifyCenter" title="居中对齐">
+                                        <i class="fas fa-align-center"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" data-command="justifyRight" title="右对齐">
+                                        <i class="fas fa-align-right"></i>
+                                    </button>
+                                    <div class="toolbar-divider"></div>
+                                    <button type="button" class="toolbar-btn" data-command="createLink" title="插入链接">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                    <button type="button" class="toolbar-btn" data-command="insertImage" title="插入图片">
+                                        <i class="fas fa-image"></i>
+                                    </button>
+                                    <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                                    <div class="toolbar-divider"></div>
+                                    <select class="format-select" data-command="formatBlock" title="格式">
+                                        <option value="div">正文</option>
+                                        <option value="h1">标题 1</option>
+                                        <option value="h2">标题 2</option>
+                                        <option value="h3">标题 3</option>
+                                        <option value="blockquote">引用</option>
+                                    </select>
+                                </div>
+                                <div class="editor-content" id="noteContent" contenteditable="true" placeholder="在这里写下您的想法..."></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="noteTags">标签</label>
+                            <div class="tag-input-container">
+                                <input type="text" id="noteTags" placeholder="用逗号分隔标签">
+                                <div class="tag-suggestions" id="tagSuggestions"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 错误提示区域 -->
+            <div class="error-message-container" id="errorMessageContainer"></div>
+            
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelAdd">取消</button>
+                <button class="btn-primary" id="confirmAdd">
+                    <span class="btn-text">添加</span>
+                    <span class="btn-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span class="loading-text">处理中...</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文档预览模态框 -->
+    <div class="document-preview-modal" id="documentPreviewModal">
+        <div class="document-preview-header">
+            <div class="document-info">
+                <h3 id="previewDocumentName">文档名称</h3>
+                <p id="previewDocumentMeta">信息</p>
+            </div>
+            <div class="document-preview-controls">
+                <button class="doc-control-btn" id="downloadDocument" title="下载文档">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button class="doc-control-btn" id="closeDocumentPreview" title="关闭">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="document-preview-container">
+            <div class="document-content" id="documentContent">
+                <!-- 文档内容会动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 遮罩层 -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- 图片预览模态框 -->
+    <div class="image-preview-modal" id="imagePreviewModal">
+        <div class="image-preview-header">
+            <div class="image-info">
+                <h3 id="previewImageName">图片名称</h3>
+                <p id="previewImageMeta">信息</p>
+            </div>
+            <div class="image-controls">
+                <button class="control-btn" id="zoomOut" title="缩小">
+                    <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="control-btn" id="zoomIn" title="放大">
+                    <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="control-btn" id="resetZoom" title="重置缩放">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="control-btn" id="downloadImage" title="下载图片">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button class="control-btn" id="closePreview" title="关闭">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="image-preview-container">
+            <button class="nav-btn prev-btn" id="prevImage" title="上一张">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <div class="image-wrapper">
+                <img id="previewImage" src="" alt="预览图片">
+            </div>
+            
+            <button class="nav-btn next-btn" id="nextImage" title="下一张">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        
+        <div class="image-preview-footer">
+            <div class="image-thumbnails" id="imageThumbnails">
+                <!-- 缩略图会动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 批量移动分类模态框 -->
+    <div class="modal" id="bulkMoveModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>移动到分类</h2>
+                <button class="modal-close" id="closeBulkMoveModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="bulk-move-info">
+                    <i class="fas fa-info-circle"></i>
+                    将 <span id="moveSelectionCount">0</span> 张图片移动到指定分类
+                </div>
+                <div class="form-group">
+                    <label for="targetCategory">目标分类</label>
+                    <select id="targetCategory" class="filter-select">
+                        <option value="">请选择分类</option>
+                        <option value="work">工作相关</option>
+                        <option value="personal">个人生活</option>
+                        <option value="study">学习资料</option>
+                        <option value="design">设计素材</option>
+                        <option value="other">其他分类</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="moveAddTags">添加标签（可选）</label>
+                    <input type="text" id="moveAddTags" placeholder="用逗号分隔标签">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelBulkMove">取消</button>
+                <button class="btn-primary" id="confirmBulkMove" disabled>
+                    <span class="btn-text">移动</span>
+                    <span class="btn-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span class="loading-text">移动中...</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知容器 -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- 分类管理模态框 -->
+    <div class="modal" id="categoryManageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>管理图片分类</h2>
+                <button class="modal-close" id="closeCategoryManageModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="category-list" id="categoryList">
+                    <!-- 分类列表会动态生成 -->
+                </div>
+                <div class="add-category-form">
+                    <h3>添加新分类</h3>
+                    <div class="form-group">
+                        <label for="newCategoryName">分类名称</label>
+                        <input type="text" id="newCategoryName" placeholder="输入分类名称">
+                    </div>
+                    <div class="form-group">
+                        <label for="newCategoryDescription">分类描述</label>
+                        <input type="text" id="newCategoryDescription" placeholder="输入分类描述">
+                    </div>
+                    <div class="form-group">
+                        <label for="newCategoryColor">分类颜色</label>
+                        <div class="color-picker">
+                            <input type="color" id="newCategoryColor" value="#6366f1">
+                            <div class="color-presets">
+                                <button type="button" class="color-preset" data-color="#6366f1" style="background: #6366f1;"></button>
+                                <button type="button" class="color-preset" data-color="#8b5cf6" style="background: #8b5cf6;"></button>
+                                <button type="button" class="color-preset" data-color="#ec4899" style="background: #ec4899;"></button>
+                                <button type="button" class="color-preset" data-color="#ef4444" style="background: #ef4444;"></button>
+                                <button type="button" class="color-preset" data-color="#f59e0b" style="background: #f59e0b;"></button>
+                                <button type="button" class="color-preset" data-color="#10b981" style="background: #10b981;"></button>
+                                <button type="button" class="color-preset" data-color="#06b6d4" style="background: #06b6d4;"></button>
+                                <button type="button" class="color-preset" data-color="#6b7280" style="background: #6b7280;"></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="newCategoryIcon">图标</label>
+                        <div class="icon-picker">
+                            <input type="text" id="newCategoryIcon" value="fas fa-folder" placeholder="输入Font Awesome图标类名">
+                            <div class="icon-presets">
+                                <button type="button" class="icon-preset" data-icon="fas fa-folder"><i class="fas fa-folder"></i></button>
+                                <button type="button" class="icon-preset" data-icon="fas fa-heart"><i class="fas fa-heart"></i></button>
+                                <button type="button" class="icon-preset" data-icon="fas fa-mountain"><i class="fas fa-mountain"></i></button>
+                                <button type="button" class="icon-preset" data-icon="fas fa-palette"><i class="fas fa-palette"></i></button>
+                                <button type="button" class="icon-preset" data-icon="fas fa-desktop"><i class="fas fa-desktop"></i></button>
+                                <button type="button" class="icon-preset" data-icon="fas fa-camera"><i class="fas fa-camera"></i></button>
+                                <button type="button" class="icon-preset" data-icon="fas fa-star"><i class="fas fa-star"></i></button>
+                                <button type="button" class="icon-preset" data-icon="fas fa-fire"><i class="fas fa-fire"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelCategoryManage">取消</button>
+                <button class="btn-primary" id="addNewCategory">
+                    <i class="fas fa-plus"></i> 添加分类
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 图片详情模态框 -->
+    <div class="modal" id="imageDetailModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2>图片详情</h2>
+                <button class="modal-close" id="closeImageDetailModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="image-detail-layout">
+                    <div class="image-detail-preview">
+                        <div class="image-quality-toggle">
+                            <button id="showCompressed" class="quality-btn active">
+                                <i class="fas fa-tachometer-alt"></i> 压缩图
+                            </button>
+                            <button id="showOriginal" class="quality-btn">
+                                <i class="fas fa-image"></i> 原图
+                            </button>
+                        </div>
+                        <div class="image-detail-container">
+                            <img id="detailImage" src="" alt="" class="detail-image">
+                        </div>
+                        <div class="image-meta-info">
+                            <div class="meta-item">
+                                <span class="meta-label">尺寸：</span>
+                                <span id="imageDimensions">-</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">大小：</span>
+                                <span id="imageFileSize">-</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">格式：</span>
+                                <span id="imageFormat">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="image-detail-info">
+                        <div class="form-group">
+                            <label for="detailImageName">图片名称</label>
+                            <input type="text" id="detailImageName" placeholder="输入图片名称">
+                        </div>
+                        <div class="form-group">
+                            <label for="detailImageCategory">所属分类</label>
+                            <select id="detailImageCategory" class="filter-select">
+                                <!-- 分类选项会动态生成 -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="detailImageDescription">图片描述</label>
+                            <textarea id="detailImageDescription" placeholder="输入图片描述或备注" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="detailImageTags">标签</label>
+                            <div class="tag-input-container">
+                                <input type="text" id="detailImageTags" placeholder="输入标签，用逗号分隔">
+                                <div class="tag-suggestions" id="detailTagSuggestions"></div>
+                            </div>
+                            <div class="suggested-tags" id="detailSuggestedTags">
+                                <!-- 智能推荐标签会显示在这里 -->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>关联笔记</label>
+                            <div class="associated-notes">
+                                <div class="notes-list" id="associatedNotesList">
+                                    <!-- 关联笔记列表 -->
+                                </div>
+                                <button type="button" id="addNoteAssociation" class="btn-secondary">
+                                    <i class="fas fa-plus"></i> 添加笔记关联
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelImageDetail">取消</button>
+                <button class="btn-primary" id="saveImageDetail">
+                    <i class="fas fa-save"></i> 保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑内容模态框 -->
+    <div class="modal" id="editContentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="editModalTitle">编辑内容</h2>
+                <button class="modal-close" id="closeEditModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- 编辑笔记表单 -->
+                <div class="edit-form" id="editNoteForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="editNoteTitle">标题</label>
+                        <input type="text" id="editNoteTitle" placeholder="笔记标题" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editNoteContent">内容</label>
+                        <div class="rich-text-editor">
+                            <div class="editor-toolbar">
+                                <button type="button" class="toolbar-btn" data-command="bold" title="加粗">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-command="italic" title="斜体">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-command="underline" title="下划线">
+                                    <i class="fas fa-underline"></i>
+                                </button>
+                                <div class="toolbar-divider"></div>
+                                <button type="button" class="toolbar-btn" data-command="insertUnorderedList" title="无序列表">
+                                    <i class="fas fa-list-ul"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-command="insertOrderedList" title="有序列表">
+                                    <i class="fas fa-list-ol"></i>
+                                </button>
+                                <div class="toolbar-divider"></div>
+                                <button type="button" class="toolbar-btn" data-command="justifyLeft" title="左对齐">
+                                    <i class="fas fa-align-left"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-command="justifyCenter" title="居中对齐">
+                                    <i class="fas fa-align-center"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-command="justifyRight" title="右对齐">
+                                    <i class="fas fa-align-right"></i>
+                                </button>
+                                <div class="toolbar-divider"></div>
+                                <button type="button" class="toolbar-btn" data-command="createLink" title="插入链接">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-command="insertImage" title="插入图片">
+                                    <i class="fas fa-image"></i>
+                                </button>
+                                <input type="file" id="editImageUpload" accept="image/*" style="display: none;">
+                                <div class="toolbar-divider"></div>
+                                <select class="format-select" data-command="formatBlock" title="格式">
+                                    <option value="div">正文</option>
+                                    <option value="h1">标题 1</option>
+                                    <option value="h2">标题 2</option>
+                                    <option value="h3">标题 3</option>
+                                    <option value="blockquote">引用</option>
+                                </select>
+                            </div>
+                            <div class="editor-content" id="editNoteContent" contenteditable="true" placeholder="在这里编辑您的想法..."></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editNoteTags">标签</label>
+                        <div class="tag-input-container">
+                            <input type="text" id="editNoteTags" placeholder="用逗号分隔标签">
+                            <div class="tag-suggestions" id="editTagSuggestions"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 编辑链接表单 -->
+                <div class="edit-form" id="editLinkForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="editLinkUrl">链接地址</label>
+                        <input type="url" id="editLinkUrl" placeholder="https://example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editLinkTitle">标题</label>
+                        <input type="text" id="editLinkTitle" placeholder="链接标题">
+                    </div>
+                    <div class="form-group">
+                        <label for="editLinkDescription">描述</label>
+                        <textarea id="editLinkDescription" placeholder="链接描述（可选）"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editLinkTags">标签</label>
+                        <input type="text" id="editLinkTags" placeholder="用逗号分隔标签">
+                    </div>
+                    <div class="form-group">
+                        <label for="editLinkFolder">所属文件夹</label>
+                        <select id="editLinkFolder" class="folder-selector">
+                            <!-- 文件夹选项会通过JavaScript动态加载 -->
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- 编辑文档表单 -->
+                <div class="edit-form" id="editDocumentForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="editDocumentName">文档名称</label>
+                        <input type="text" id="editDocumentName" placeholder="文档名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDocumentTags">标签</label>
+                        <input type="text" id="editDocumentTags" placeholder="用逗号分隔标签">
+                    </div>
+                </div>
+                
+                <!-- 编辑图片表单 -->
+                <div class="edit-form" id="editImageForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="editImageName">图片名称</label>
+                        <input type="text" id="editImageName" placeholder="图片名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editImageTags">标签</label>
+                        <input type="text" id="editImageTags" placeholder="用逗号分隔标签">
+                    </div>
+                </div>
+                
+                <!-- 编辑视频表单 -->
+                <div class="edit-form" id="editVideoForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="editVideoName">视频名称</label>
+                        <input type="text" id="editVideoName" placeholder="视频名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editVideoTags">标签</label>
+                        <input type="text" id="editVideoTags" placeholder="用逗号分隔标签">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 错误提示区域 -->
+            <div class="error-message-container" id="editErrorMessageContainer"></div>
+            
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelEdit">取消</button>
+                <button class="btn-primary" id="confirmEdit">
+                    <span class="btn-text">保存</span>
+                    <span class="btn-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span class="loading-text">保存中...</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认删除对话框 -->
+    <div class="modal" id="deleteConfirmModal">
+        <div class="modal-content confirm-dialog">
+            <div class="modal-header">
+                <h2>确认删除</h2>
+                <button class="modal-close" id="closeDeleteModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-content">
+                    <div class="confirm-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="confirm-text">
+                        <h3 id="deleteConfirmTitle">确认删除此项目？</h3>
+                        <p id="deleteConfirmMessage">此操作不可撤销，删除后将无法恢复。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelDelete">取消</button>
+                <button class="btn-danger" id="confirmDelete">
+                    <span class="btn-text">删除</span>
+                    <span class="btn-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span class="loading-text">删除中...</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文件夹管理模态框 -->
+    <!-- 创建文件夹模态框 -->
+    <div class="modal" id="createFolderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>创建新文件夹</h2>
+                <button class="modal-close" id="closeCreateFolderModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createFolderForm">
+                    <div class="form-group">
+                        <label for="folderName">文件夹名称</label>
+                        <input type="text" id="folderName" placeholder="请输入文件夹名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="folderDescription">文件夹描述</label>
+                        <textarea id="folderDescription" placeholder="描述这个文件夹的用途（可选）"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="folderColor">文件夹颜色</label>
+                        <div class="color-selector">
+                            <div class="color-option" data-color="#6366f1" style="background: #6366f1"></div>
+                            <div class="color-option" data-color="#10b981" style="background: #10b981"></div>
+                            <div class="color-option" data-color="#f59e0b" style="background: #f59e0b"></div>
+                            <div class="color-option" data-color="#ef4444" style="background: #ef4444"></div>
+                            <div class="color-option" data-color="#8b5cf6" style="background: #8b5cf6"></div>
+                            <div class="color-option" data-color="#06b6d4" style="background: #06b6d4"></div>
+                            <div class="color-option" data-color="#f472b6" style="background: #f472b6"></div>
+                            <div class="color-option" data-color="#84cc16" style="background: #84cc16"></div>
+                        </div>
+                        <input type="hidden" id="selectedFolderColor" value="#6366f1">
+                    </div>
+                    <div class="form-group">
+                        <label for="folderIcon">文件夹图标</label>
+                        <div class="icon-selector">
+                            <div class="icon-option selected" data-icon="fas fa-folder">
+                                <i class="fas fa-folder"></i>
+                            </div>
+                            <div class="icon-option" data-icon="fas fa-briefcase">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <div class="icon-option" data-icon="fas fa-graduation-cap">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="icon-option" data-icon="fas fa-heart">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="icon-option" data-icon="fas fa-star">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="icon-option" data-icon="fas fa-bookmark">
+                                <i class="fas fa-bookmark"></i>
+                            </div>
+                            <div class="icon-option" data-icon="fas fa-code">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div class="icon-option" data-icon="fas fa-palette">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selectedFolderIcon" value="fas fa-folder">
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="enableEncryption">
+                                <span class="checkbox-custom"></span>
+                                <i class="fas fa-lock"></i>
+                                启用加密保护
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group encryption-settings" id="encryptionSettings" style="display: none;">
+                        <label for="folderPassword">设置密码</label>
+                        <input type="password" id="folderPassword" placeholder="请输入文件夹密码">
+                        <small class="form-hint">
+                            <i class="fas fa-info-circle"></i>
+                            加密文件夹将需要密码才能查看内容
+                        </small>
+                    </div>
+                </form>
+                <!-- 错误提示区域 -->
+                <div class="error-message-container" id="createFolderErrorContainer"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelCreateFolder">取消</button>
+                <button class="btn-primary" id="confirmCreateFolder">
+                    <span class="btn-text">创建</span>
+                    <span class="btn-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span class="loading-text">创建中...</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文件夹密码验证模态框 -->
+    <div class="modal" id="folderPasswordModal">
+        <div class="modal-content confirm-dialog">
+            <div class="modal-header">
+                <h2>
+                    <i class="fas fa-lock"></i>
+                    访问加密文件夹
+                </h2>
+                <button class="modal-close" id="closeFolderPasswordModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="password-prompt">
+                    <div class="folder-info" id="passwordFolderInfo">
+                        <i class="fas fa-folder folder-icon"></i>
+                        <div class="folder-details">
+                            <h4 id="passwordFolderName">文件夹名称</h4>
+                            <p id="passwordFolderDesc">此文件夹受密码保护</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="accessPassword">请输入密码</label>
+                        <input type="password" id="accessPassword" placeholder="输入文件夹密码" autofocus>
+                    </div>
+                </div>
+                <!-- 错误提示区域 -->
+                <div class="error-message-container" id="passwordErrorContainer"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelFolderAccess">取消</button>
+                <button class="btn-primary" id="confirmFolderAccess">
+                    <span class="btn-text">访问</span>
+                    <span class="btn-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span class="loading-text">验证中...</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 笔记查看器模态框 -->
+    <div class="modal note-viewer-modal" id="noteViewerModal">
+        <div class="modal-content note-viewer-content">
+            <div class="note-viewer-header">
+                <div class="note-title-section">
+                    <input type="text" class="note-viewer-title-input" id="noteViewerTitle" placeholder="笔记标题">
+                    <div class="note-meta-info">
+                        <span class="auto-save-status" id="autoSaveStatus">
+                            <i class="fas fa-check-circle"></i>
+                            <span>已保存</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="note-viewer-actions">
+                    <button class="note-action-btn danger" id="noteDeleteBtn" title="删除">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="note-action-btn secondary modal-close" title="关闭">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="note-viewer-body">
+                <div class="note-edit-form">
+                    <div class="form-group">
+                        <div class="rich-text-editor note-viewer-editor">
+                            <div class="editor-content" id="noteViewerContent" contenteditable="true" placeholder="在这里编辑您的想法..."></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group note-tags-group">
+                        <label for="noteViewerTags">
+                            <i class="fas fa-tags"></i>
+                            标签
+                        </label>
+                        <div class="tag-input-container">
+                            <input type="text" id="noteViewerTags" placeholder="用逗号分隔标签">
+                            <div class="tag-suggestions" id="noteViewerTagSuggestions"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

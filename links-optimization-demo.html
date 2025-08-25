@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>链接收藏页面优化演示</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 演示页面特定样式 */
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        
+        .demo-header {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .demo-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .demo-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .demo-benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .benefit-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .benefit-card .icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .benefit-card h3 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .benefit-card p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+        
+        .demo-preview {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .preview-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .preview-header h2 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .preview-header p {
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <!-- 演示说明 -->
+        <div class="demo-header">
+            <h1><i class="fas fa-magic"></i> 链接收藏页面布局优化</h1>
+            <p>更清晰的信息层次 · 更便捷的操作流程 · 更优雅的视觉设计</p>
+        </div>
+        
+        <!-- 优化亮点 -->
+        <div class="demo-benefits">
+            <div class="benefit-card">
+                <div class="icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3>视觉层次清晰</h3>
+                <p>重新设计的页面头部突出显示重要统计信息，用户一眼就能看到自己的链接收藏情况。</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>搜索功能增强</h3>
+                <p>集成的搜索栏支持实时搜索，可以快速找到标题、描述或标签中包含关键词的链接。</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="icon">
+                    <i class="fas fa-folder"></i>
+                </div>
+                <h3>文件夹导航优化</h3>
+                <p>标签页式的文件夹导航，显示每个文件夹的链接数量，切换更直观便捷。</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="icon">
+                    <i class="fas fa-check-square"></i>
+                </div>
+                <h3>批量操作突出</h3>
+                <p>醒目的批量操作栏，清晰显示选择状态和可用操作，提升批量管理效率。</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="icon">
+                    <i class="fas fa-th-large"></i>
+                </div>
+                <h3>卡片布局优化</h3>
+                <p>重新设计的链接卡片，清晰显示标题、URL、描述、标签和操作按钮，信息一目了然。</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>响应式适配</h3>
+                <p>完美适配各种屏幕尺寸，在手机、平板、电脑上都有出色的使用体验。</p>
+            </div>
+        </div>
+        
+        <!-- 预览框架 -->
+        <div class="demo-preview">
+            <div class="preview-header">
+                <h2>优化后的链接收藏页面</h2>
+                <p>以下是实际的优化效果，您可以直接体验新的布局和交互</p>
+            </div>
+            
+            <!-- 这里嵌入优化后的链接收藏页面 -->
+            <div id="optimized-links-section" class="content-section active">
+                <!-- 优化后的页面头部 -->
+                <div class="links-page-header">
+                    <div class="header-content">
+                        <div class="header-text">
+                            <h1><i class="fas fa-link"></i> 链接收藏</h1>
+                            <p>管理您收集的网页链接和在线资源</p>
+                        </div>
+                        <div class="header-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-bookmark"></i>
+                                <span id="demoTotalLinksCount">8</span> 个链接
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-folder"></i>
+                                <span id="demoTotalFoldersCount">3</span> 个文件夹
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-tags"></i>
+                                <span id="demoTotalTagsCount">12</span> 个标签
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 优化后的快速操作栏 -->
+                <div class="links-quick-actions">
+                    <div class="search-and-filter">
+                        <div class="enhanced-search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="demoLinksSearchInput" placeholder="搜索链接标题、描述或标签...">
+                        </div>
+                        <div class="filter-dropdown">
+                            <select id="demoLinkTagFilter" class="enhanced-filter-select">
+                                <option value="all">所有标签</option>
+                                <option value="技术">技术</option>
+                                <option value="设计">设计</option>
+                                <option value="工具">工具</option>
+                            </select>
+                        </div>
+                        <div class="filter-dropdown">
+                            <select id="demoLinkSortFilter" class="enhanced-filter-select">
+                                <option value="newest">最新添加</option>
+                                <option value="oldest">最早添加</option>
+                                <option value="title">按标题</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="enhanced-btn btn-secondary" id="demoBulkModeBtn">
+                            <i class="fas fa-check-square"></i>
+                            批量选择
+                        </button>
+                        <button class="enhanced-btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            添加链接
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 优化后的文件夹导航 -->
+                <div class="enhanced-folder-nav">
+                    <div class="folder-nav-header">
+                        <h3><i class="fas fa-folder-open"></i> 文件夹</h3>
+                        <button class="enhanced-btn btn-secondary small-btn">
+                            <i class="fas fa-plus"></i>
+                            新建文件夹
+                        </button>
+                    </div>
+                    <div class="folder-tabs-container">
+                        <div class="folder-tabs" id="demoFolderTabs">
+                            <button class="folder-tab active">
+                                <i class="fas fa-layer-group"></i>
+                                全部链接 (8)
+                            </button>
+                            <button class="folder-tab">
+                                <i class="fas fa-briefcase"></i>
+                                工作资料 (3)
+                            </button>
+                            <button class="folder-tab">
+                                <i class="fas fa-graduation-cap"></i>
+                                学习资源 (4)
+                            </button>
+                            <button class="folder-tab">
+                                <i class="fas fa-heart"></i>
+                                个人收藏 (1)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 优化后的批量操作栏 -->
+                <div class="enhanced-bulk-operations" id="demoBulkOperationsBar" style="display: none;">
+                    <div class="bulk-info">
+                        <i class="fas fa-check-circle"></i>
+                        <span>已选择 <strong id="demoSelectedCount">0</strong> 个链接</span>
+                    </div>
+                    <div class="bulk-actions">
+                        <button class="bulk-btn">
+                            <i class="fas fa-check-double"></i>
+                            全选
+                        </button>
+                        <button class="bulk-btn">
+                            <i class="fas fa-times"></i>
+                            清除
+                        </button>
+                        <button class="bulk-btn">
+                            <i class="fas fa-folder"></i>
+                            移动到
+                        </button>
+                        <button class="bulk-btn">
+                            <i class="fas fa-download"></i>
+                            导出
+                        </button>
+                        <button class="bulk-btn danger">
+                            <i class="fas fa-trash"></i>
+                            删除
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 优化后的链接网格 -->
+                <div class="enhanced-links-grid" id="demoLinksGrid">
+                    <!-- 演示链接卡片 -->
+                    <div class="content-card link-card">
+                        <div class="card-checkbox">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        
+                        <div class="card-header">
+                            <h3 class="card-title">GitHub - 全球最大的代码托管平台</h3>
+                            <a href="https://github.com" class="card-url" target="_blank">
+                                <i class="fas fa-external-link-alt"></i>
+                                github.com
+                            </a>
+                        </div>
+                        
+                        <div class="card-body">
+                            <p class="card-description">GitHub是一个面向开源及私有软件项目的托管平台，为开发者提供Git代码托管服务。</p>
+                            <div class="card-tags">
+                                <span class="tag">开发</span>
+                                <span class="tag">代码</span>
+                                <span class="tag">Git</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <div class="card-meta">
+                                <span><i class="fas fa-calendar"></i> 3天前</span>
+                                <span><i class="fas fa-folder"></i> 工作资料</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn" title="编辑">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn danger" title="删除">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card link-card">
+                        <div class="card-checkbox">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        
+                        <div class="card-header">
+                            <h3 class="card-title">Figma - 协作设计工具</h3>
+                            <a href="https://figma.com" class="card-url" target="_blank">
+                                <i class="fas fa-external-link-alt"></i>
+                                figma.com
+                            </a>
+                        </div>
+                        
+                        <div class="card-body">
+                            <p class="card-description">基于浏览器的界面设计工具，支持实时协作，是现代设计师的必备工具。</p>
+                            <div class="card-tags">
+                                <span class="tag">设计</span>
+                                <span class="tag">UI/UX</span>
+                                <span class="tag">协作</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <div class="card-meta">
+                                <span><i class="fas fa-calendar"></i> 1周前</span>
+                                <span class=""><i class="fas fa-folder"></i> 工作资料</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn" title="编辑">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn danger" title="删除">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card link-card">
+                        <div class="card-checkbox">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        
+                        <div class="card-header">
+                            <h3 class="card-title">MDN Web 文档</h3>
+                            <a href="https://developer.mozilla.org" class="card-url" target="_blank">
+                                <i class="fas fa-external-link-alt"></i>
+                                developer.mozilla.org
+                            </a>
+                        </div>
+                        
+                        <div class="card-body">
+                            <p class="card-description">Mozilla 开发者网络提供的 Web 技术文档，包含 HTML、CSS、JavaScript 等详细说明。</p>
+                            <div class="card-tags">
+                                <span class="tag">文档</span>
+                                <span class="tag">Web</span>
+                                <span class="tag">学习</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <div class="card-meta">
+                                <span><i class="fas fa-calendar"></i> 2周前</span>
+                                <span><i class="fas fa-folder"></i> 学习资源</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn" title="编辑">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn danger" title="删除">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 演示脚本
+        let demoBulkMode = false;
+        let demoSelectedLinks = new Set();
+        
+        // 批量选择功能演示
+        document.getElementById('demoBulkModeBtn').addEventListener('click', function() {
+            demoBulkMode = !demoBulkMode;
+            const linksGrid = document.getElementById('demoLinksGrid');
+            const bulkBar = document.getElementById('demoBulkOperationsBar');
+            
+            if (demoBulkMode) {
+                linksGrid.classList.add('bulk-mode');
+                bulkBar.style.display = 'flex';
+                this.innerHTML = '<i class="fas fa-times"></i> 取消选择';
+                this.style.background = '#ef4444';
+                this.style.color = 'white';
+            } else {
+                linksGrid.classList.remove('bulk-mode');
+                bulkBar.style.display = 'none';
+                this.innerHTML = '<i class="fas fa-check-square"></i> 批量选择';
+                this.style.background = '';
+                this.style.color = '';
+                demoSelectedLinks.clear();
+                updateDemoSelectedCount();
+                
+                // 清除所有选中状态
+                document.querySelectorAll('.card-checkbox').forEach(checkbox => {
+                    checkbox.classList.remove('checked');
+                    checkbox.querySelector('i').style.display = 'none';
+                });
+                document.querySelectorAll('.link-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+            }
+        });
+        
+        // 卡片点击选择
+        document.querySelectorAll('.link-card').forEach((card, index) => {
+            const checkbox = card.querySelector('.card-checkbox');
+            
+            card.addEventListener('click', function(e) {
+                if (demoBulkMode && !e.target.closest('.card-actions') && !e.target.closest('.card-url')) {
+                    e.preventDefault();
+                    toggleCardSelection(card, checkbox, index);
+                }
+            });
+            
+            checkbox.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (demoBulkMode) {
+                    toggleCardSelection(card, checkbox, index);
+                }
+            });
+        });
+        
+        function toggleCardSelection(card, checkbox, index) {
+            if (demoSelectedLinks.has(index)) {
+                demoSelectedLinks.delete(index);
+                checkbox.classList.remove('checked');
+                checkbox.querySelector('i').style.display = 'none';
+                card.classList.remove('selected');
+            } else {
+                demoSelectedLinks.add(index);
+                checkbox.classList.add('checked');
+                checkbox.querySelector('i').style.display = 'block';
+                card.classList.add('selected');
+            }
+            updateDemoSelectedCount();
+        }
+        
+        function updateDemoSelectedCount() {
+            document.getElementById('demoSelectedCount').textContent = demoSelectedLinks.size;
+        }
+        
+        // 搜索功能演示
+        document.getElementById('demoLinksSearchInput').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('.link-card').forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const description = card.querySelector('.card-description').textContent.toLowerCase();
+                const tags = Array.from(card.querySelectorAll('.tag')).map(tag => tag.textContent.toLowerCase()).join(' ');
+                
+                if (title.includes(query) || description.includes(query) || tags.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = query ? 'none' : 'block';
+                }
+            });
+        });
+        
+        // 文件夹切换演示
+        document.querySelectorAll('.folder-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.folder-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
